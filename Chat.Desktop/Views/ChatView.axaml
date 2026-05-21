@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:Chat.Desktop.ViewModels"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chat.Desktop.Views.ChatView"
+             x:DataType="vm:ChatViewModel">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollViewer 
+            Grid.Row="0" 
+            Margin="10 30 10 0"
+            VerticalScrollBarVisibility="Auto" 
+            HorizontalScrollBarVisibility="Auto" 
+            HorizontalAlignment="Stretch" 
+            VerticalAlignment="Stretch"
+            AllowAutoHide="False"
+            MinWidth="700">
+            <ItemsControl 
+                ItemsSource="{Binding }">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel 
+                            Margin="0 0 0 10" 
+                            HorizontalSpacing="10">
+                            <StackPanel Orientation="Vertical">
+                                <DockPanel HorizontalSpacing="10">
+                                    <TextBlock Text="{Binding }" />
+                                </DockPanel>
+                                <TextBlock Text="{Binding }" />
+                            </StackPanel>
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <DockPanel 
+            Grid.Row="1" 
+            HorizontalSpacing="5"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Bottom">
+            <Button 
+                DockPanel.Dock="Right"
+                Width="150"
+                VerticalAlignment="Stretch"
+                Content="发送" />
+            <TextBox 
+                HorizontalAlignment="Stretch"
+                Watermark="想说点什么"
+                Text="{Binding SendContent}" />
+        </DockPanel>
+    </Grid>
+
+</UserControl>
