@@ -1,10 +1,55 @@
-﻿bin/
-obj/
-packages/
-*.user
+## Visual Studio generated files
 *.suo
+*.user
+*.userosscache
+*.sln.docstates
 .vs/
-*.dll
-*.exe
-*.cache
+bin/
+obj/
+*.iobj
+*.ipdb
+
+## Build outputs
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+## NuGet packages
+**/packages/*
+*.nupkg
+*.snupkg
+project.lock.json
+
+## Test results
+TestResults/
+*.trx
+
+## Logs
 *.log
+Logs/
+
+## Other
+*.cache
+~$*
+*~
+*.pfx
+*.publishsettings
+
+## Rider/ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+## NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+
+## Node.js
+node_modules/
+
+## Database files
+*.mdf
+*.ldf
+
+## Avalonia
+*.axaml.cs.bak

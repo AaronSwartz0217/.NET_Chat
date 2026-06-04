@@ -2,35 +2,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="using:Chat.Desktop.ViewModels"
+             xmlns:conv="using:Chat.Desktop.Converters"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chat.Desktop.Views.ChatView"
              x:DataType="vm:ChatViewModel">
 
+    <UserControl.Resources>
+        <conv:BooleanToHorizontalAlignmentConverter x:Key="BooleanToHorizontalAlignmentConverter" />
+        <conv:BooleanToBrushConverter x:Key="BooleanToBrushConverter" />
+    </UserControl.Resources>
+
     <Grid RowDefinitions="*,Auto">
         <ScrollViewer 
             Grid.Row="0" 
-            Margin="10 30 10 0"
+            Margin="10"
             VerticalScrollBarVisibility="Auto" 
             HorizontalScrollBarVisibility="Auto" 
             HorizontalAlignment="Stretch" 
             VerticalAlignment="Stretch"
-            AllowAutoHide="False"
-            MinWidth="700">
-            <ItemsControl 
-                ItemsSource="{Binding }">
+            AllowAutoHide="False">
+            <ItemsControl ItemsSource="{Binding MessageList}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <DockPanel 
-                            Margin="0 0 0 10" 
-                            HorizontalSpacing="10">
-                            <StackPanel Orientation="Vertical">
-                                <DockPanel HorizontalSpacing="10">
-                                    <TextBlock Text="{Binding }" />
-                                </DockPanel>
-                                <TextBlock Text="{Binding }" />
-                            </StackPanel>
-                        </DockPanel>
+                        <StackPanel 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="{Binding IsMe, Converter={StaticResource BooleanToHorizontalAlignmentConverter}}"
+                            Margin="0 5 0 0">
+                            <Border 
+                                Background="{Binding IsMe, Converter={StaticResource BooleanToBrushConverter}}"
+                                CornerRadius="10"
+                                Padding="10"
+                                MaxWidth="400">
+                                <TextBlock 
+                                    Text="{Binding Content}" 
+                                    TextWrapping="Wrap" />
+                            </Border>
+                        </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -38,19 +46,20 @@
 
         <DockPanel 
             Grid.Row="1" 
-            HorizontalSpacing="5"
+            Margin="10"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Bottom">
             <Button 
                 DockPanel.Dock="Right"
-                Width="150"
-                VerticalAlignment="Stretch"
-                Content="发送" />
+                Width="80"
+                Height="35"
+                Content="发送" 
+                Command="{Binding SendCommand}"/>
             <TextBox 
                 HorizontalAlignment="Stretch"
-                Watermark="想说点什么"
+                Height="35"
+                Watermark="输入消息..."
                 Text="{Binding SendContent}" />
         </DockPanel>
     </Grid>
-
 </UserControl>

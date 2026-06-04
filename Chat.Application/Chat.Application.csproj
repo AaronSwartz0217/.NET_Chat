@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Chat.Core\Chat.Core.csproj" />
+    <PackageReference Include="Furion.Pure" Version="4.9.8.81" />
+    <PackageReference Include="SqlSugarCore" Version="5.1.4.142" />
     <PackageReference Include="Mapster" Version="7.5.0" />
     <PackageReference Include="Mapster.DependencyInjection" Version="7.5.0" />
   </ItemGroup>

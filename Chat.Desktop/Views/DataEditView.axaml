@@ -8,14 +8,14 @@
              x:DataType="vm:DataEditViewModel">
 
     <Grid RowDefinitions="*,Auto" RowSpacing="10">
-        <StackPanel Grid.Row="0" Spacing="10" Padding="10">
+        <StackPanel Grid.Row="0" Spacing="10" Margin="10">
             <TextBlock Text="编辑数据" FontSize="18" FontWeight="Bold"/>
             <TextBlock Text="ID: " />
             <TextBox Text="{Binding Id, Mode=OneWay}" IsReadOnly="True"/>
         </StackPanel>
         
-        <DockPanel Grid.Row="1" HorizontalAlignment="Right" Spacing="10" Margin="10">
-            <Button Content="确定" Command="{Binding OkClickCommand}"/>
+        <DockPanel Grid.Row="1" HorizontalAlignment="Right" Margin="10">
+            <Button Content="确定" Margin="0 0 10 0" Command="{Binding OkClickCommand}"/>
             <Button Content="取消" Command="{Binding CancelClickCommand}"/>
         </DockPanel>
     </Grid>
