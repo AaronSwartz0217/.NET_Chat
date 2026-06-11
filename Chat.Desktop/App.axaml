@@ -2,13 +2,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Chat.Desktop.App"
              xmlns:local="using:Chat.Desktop"
+             
+             xmlns:semi="https://irihi.tech/semi"
+             
+             
              RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
   
     <Application.Styles>
-        <FluentTheme />
+        <semi:SemiTheme Locale="zh-CN" />
+        <semi:UrsaSemiTheme Locale="zh-CN"/>
+        <semi:DataGridSemiTheme />
+
     </Application.Styles>
 </Application>

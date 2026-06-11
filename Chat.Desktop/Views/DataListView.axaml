@@ -3,53 +3,69 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Chat.Desktop.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chat.Desktop.Views.DataListView"
              x:DataType="vm:DataListViewModel">
-
+  
     <DataGrid ItemsSource="{Binding Students}">
-        <DataGrid.Columns>
-            <DataGridTextColumn 
-                Width="*"
-                Header="学号"
-                Binding="{Binding No}"/>
-            <DataGridTextColumn 
-                Width="*"
-                Header="姓名" 
-                Binding="{Binding Name}"/>
-            <DataGridTextColumn 
-                Width="*"
-                Header="性别" 
-                Binding="{Binding Gender}"/>
-            <DataGridTextColumn 
-                Width="*"
-                Header="年龄" 
-                Binding="{Binding Age}"/>
+		<DataGrid.Columns>
+			<DataGridTextColumn 
+				Width="*"
+				Header="学号"
+				Binding="{Binding No}"/>
+			<DataGridTextColumn 
+				Width="*"
+				Header="姓名" 
+				Binding="{Binding Name}"/>
+			<DataGridTextColumn 
+				Width="*"
+				Header="性别" 
+				Binding="{Binding Gender}"/>
+			<DataGridTextColumn 
+				Width="*"
+				Header="年龄" 
+				Binding="{Binding Age}"/>
 
-            <DataGridTemplateColumn
-                Width="100"
-                Header="操作"
-                CanUserSort="False">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <StackPanel
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Center"
-                            Margin="0">
-                            <Button
-                                Content="编辑"
-                                Margin="0 0 2 0"
-                                Command="{Binding $parent[DataGrid].((vm:DataListViewModel)DataContext).EditClickCommand}"
-                                CommandParameter="{Binding Id}"/>
-                            <Button
-                                Content="删除"
-                                Command="{Binding $parent[DataGrid].DataContext.DeleteClickCommand}"
-                                CommandParameter="{Binding Id}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-        </DataGrid.Columns>
-    </DataGrid>
+
+
+    <DataGridTemplateColumn
+    Width="100"
+    Header="操作"
+    CanUserSort="False">
+        <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+                <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                Spacing="2">
+                    <u:IconButton
+                    Icon="{StaticResource SemiIconArrowRight}"
+                    Classes="Secondary"
+                    Theme="{DynamicResource BorderlessIconButton}"
+                    ToolTip.Tip="编辑"
+                    Command="{Binding $parent[DataGrid].((vm:DataListViewModel)DataContext).EditClickCommand}"
+                    CommandParameter="{Binding Id}"
+					/>
+
+                    <u:IconButton
+                    Icon="{StaticResource SemiIconDelete}"
+                    Classes="Warning"
+                    Theme="{DynamicResource BorderlessIconButton}"
+                    ToolTip.Tip="删除"
+                    Command="{Binding $parent[DataGrid].DataContext.DeleteClickCommand}"
+					CommandParameter="{Binding Id}"/>
+                </StackPanel>
+            </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+    </DataGridTemplateColumn>
+
+
+
+
+		</DataGrid.Columns>
+	</DataGrid>
+
+
 
 </UserControl>

@@ -12,17 +12,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.0.0" />
+    <PackageReference Include="Avalonia" Version="12.0.2" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.0.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.0.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.0" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.0.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.2" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
     <PackageReference Include="Mapster" Version="7.5.0" />
     <PackageReference Include="Mapster.DependencyInjection" Version="7.5.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Furion.Pure" Version="4.9.8.81" />
     <PackageReference Include="SqlSugarCore" Version="5.1.4.142" />
     <PackageReference Include="MySqlConnector" Version="2.3.2" />
+    <PackageReference Include="TouchSocket.Http" Version="2.0.2" />
+    <PackageReference Include="Semi.Avalonia" Version="12.0.1" />
+    <PackageReference Include="Irihi.Ursa" Version="2.0.0" />
+    <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="2.0.0" />
 
   </ItemGroup>
 

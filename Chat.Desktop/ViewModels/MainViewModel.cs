@@ -1,10 +1,10 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Chat.Desktop.ViewModels
+namespace Chat.Desktop.ViewModels;
+
+public class MainViewModel : ViewModelBase
 {
-    public partial class MainViewModel : ViewModelBase
-    {
-        [ObservableProperty]
-        private string greeting = "欢迎进入聊天室";
-    }
+    public int Greeting { get; } = 100;
 }

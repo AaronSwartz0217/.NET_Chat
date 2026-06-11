@@ -1,20 +1,26 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:views="using:Chat.Desktop.Views"
+             xmlns:views="using:Chat.Desktop"
+             xmlns:vm="using:Chat.Desktop.ViewModels"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Chat.Desktop.Views.MainView">
-
+             x:Class="Chat.Desktop.MainView"
+             x:DataType="vm:MainViewModel">
+  
     <Grid RowDefinitions="Auto,*" RowSpacing="10">
-        <TextBlock Text="欢迎进入聊天室" FontSize="20" FontWeight="Bold" Margin="10" />
-        <TabControl Grid.Row="1" TabStripPlacement="Left">
-            <TabItem Header="聊天室">
-                <views:ChatView />
-            </TabItem>
-            <TabItem Header="数据列表">
-                <views:DataListView />
-            </TabItem>
-        </TabControl>
+		<TextBlock Text="欢迎进入聊天室" />
+        <TabbedPage 
+            Grid.Row="1" 
+            TabPlacement="Left">
+            <ContentPage Header="聊天室">
+                <views:ChatView/>
+            </ContentPage>
+            <ContentPage Header="数据列表">
+                <views:DataListView/>
+            </ContentPage>
+        </TabbedPage>
     </Grid>
+
+
 </UserControl>

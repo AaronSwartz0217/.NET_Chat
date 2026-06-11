@@ -1,0 +1,94 @@
+<u:SplashWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Chat.Desktop.ViewModels"
+        xmlns:u="https://irihi.tech/ursa"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Chat.Desktop.LoginWindow"
+        x:DataType="vm:LoginWindowViewModel"
+        Width="640"
+        Height="520" 
+        Title="LoginWindow">
+  
+    <Design.DataContext>
+        <vm:LoginWindowViewModel />
+    </Design.DataContext>
+
+    <u:SplashWindow.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="50"/>
+        </Style>
+        <Style Selector="u|IconButton">
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </u:SplashWindow.Styles>
+
+    <Grid RowDefinitions="Auto,*">
+        <Panel 
+            Grid.Row="0"
+            Opacity="50"
+            Height="100"
+            Background="{DynamicResource SemiPurple2Color}">
+			<TextBlock 
+                Theme="{StaticResource TitleTextBlock}"
+                Classes="H2" 
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Text="用户登录"  />
+        </Panel>
+        
+        <StackPanel
+            Grid.Row="1"
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center" 
+            Spacing="16">
+            <TextBox
+                 PlaceholderText="请输入用户名" 
+                 MaxLength="30"
+                 Text="{Binding UserName}">
+                <TextBox.InnerLeftContent>
+			        <PathIcon 
+                        Width="12" 
+                        Data="{DynamicResource SemiIconUser}" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+        
+            <TextBox 
+                Classes="RevealPasswordButton"
+                PlaceholderText="请输入密码" 
+                Text="{Binding Password}">
+                <TextBox.InnerLeftContent>
+			        <PathIcon 
+                        Width="12" 
+                        Data="{DynamicResource SemiIconLock}" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+
+            <u:IconButton
+                Classes="Primary"
+                Icon="{StaticResource SemiIconTick}"
+                Theme="{DynamicResource SolidIconButton}"
+                CornerRadius="20"
+                Content="确定" 
+                Command="{Binding OkClickCommand}" />
+
+            <u:IconButton
+                Classes="Secondary"
+                Icon="{StaticResource SemiIconClose}"
+                CornerRadius="20"
+                Content="取消" 
+                Command="{Binding CancelClickCommand}" />
+
+            <HyperlinkButton 
+                Content="点我注册"
+                Command="{Binding RegisterClickCommand}"/>
+        </StackPanel>
+
+    </Grid>
+
+</u:SplashWindow>

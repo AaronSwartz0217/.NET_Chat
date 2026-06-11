@@ -2,64 +2,89 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="using:Chat.Desktop.ViewModels"
-             xmlns:conv="using:Chat.Desktop.Converters"
+             xmlns:u="https://irihi.tech/ursa"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Chat.Desktop.Views.ChatView"
+             x:Class="Chat.Desktop.ChatView"
              x:DataType="vm:ChatViewModel">
+  
 
-    <UserControl.Resources>
-        <conv:BooleanToHorizontalAlignmentConverter x:Key="BooleanToHorizontalAlignmentConverter" />
-        <conv:BooleanToBrushConverter x:Key="BooleanToBrushConverter" />
-    </UserControl.Resources>
+    <Border>
+		<SplitView
+            DisplayMode="Inline"
+            IsPaneOpen="True"
+            OpenPaneLength="200"
+            PanePlacement="Left"
+            UseLightDismissOverlayMode="True">
+            <SplitView.Pane>
+                <ListBox />
+            </SplitView.Pane>
 
-    <Grid RowDefinitions="*,Auto">
-        <ScrollViewer 
-            Grid.Row="0" 
-            Margin="10"
-            VerticalScrollBarVisibility="Auto" 
-            HorizontalScrollBarVisibility="Auto" 
-            HorizontalAlignment="Stretch" 
-            VerticalAlignment="Stretch"
-            AllowAutoHide="False">
-            <ItemsControl ItemsSource="{Binding MessageList}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel 
-                            Orientation="Horizontal" 
-                            HorizontalAlignment="{Binding IsMe, Converter={StaticResource BooleanToHorizontalAlignmentConverter}}"
-                            Margin="0 5 0 0">
-                            <Border 
-                                Background="{Binding IsMe, Converter={StaticResource BooleanToBrushConverter}}"
-                                CornerRadius="10"
-                                Padding="10"
-                                MaxWidth="400">
-                                <TextBlock 
-                                    Text="{Binding Content}" 
-                                    TextWrapping="Wrap" />
-                            </Border>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+            <Grid RowDefinitions="*,Auto">
+                <ScrollViewer 
+                    Grid.Row="0" 
+                    Grid.Column="0" 
+                    Margin="10 30 10 0"
+                    VerticalScrollBarVisibility="Auto" 
+                    HorizontalScrollBarVisibility="Auto" 
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch"
+                    AllowAutoHide="False"
+                    MinWidth="700">
+                    <ItemsControl 
+                        ItemsSource="{Binding ChatLists}">
+                        <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel 
+                                Margin="0 0 0 10" 
+                                HorizontalSpacing="10"
+                                HorizontalAlignment="{Binding TextAlignment}">
+                                <PathIcon DockPanel.Dock="{Binding TextDock}"
+                                    Classes="Large" 
+                                    Data="{StaticResource SemiIconUser}" />
+                                
+                                <StackPanel Orientation="Vertical">
+                                    <DockPanel HorizontalSpacing="10">
+										<TextBlock 
+                                            DockPanel.Dock="{Binding TextDock}"
+                                            Text="{Binding NickName}" />
+                                        <u:DateDisplay
+                                            StringFormat="HH:mm"
+                                            IsSelectable="False"
+                                            Value="{Binding SendTime}" />
+                                    </DockPanel>
+                                    <SelectableTextBlock 
+                                        HorizontalAlignment="{Binding TextAlignment}"
+                                        Text="{Binding Content}" />
+                                </StackPanel>
+                                
+                            </DockPanel>
+                        </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    </ScrollViewer>
 
-        <DockPanel 
-            Grid.Row="1" 
-            Margin="10"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom">
-            <Button 
-                DockPanel.Dock="Right"
-                Width="80"
-                Height="35"
-                Content="发送" 
-                Command="{Binding SendCommand}"/>
-            <TextBox 
-                HorizontalAlignment="Stretch"
-                Height="35"
-                Watermark="输入消息..."
-                Text="{Binding SendContent}" />
-        </DockPanel>
-    </Grid>
+                <DockPanel 
+                    Grid.Row="1" 
+                    HorizontalSpacing="5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Bottom">
+                    <u:IconButton 
+                        DockPanel.Dock="Right"
+                        Width="150"
+                        VerticalAlignment="Stretch"
+                        Icon="{StaticResource SemiIconSend}" 
+                        Content="发送" 
+                        Command="{Binding SendClickCommand}" />
+                    <TextBox 
+                        Classes="TextArea ClearButton"
+                        HorizontalAlignment="Stretch"
+                        PlaceholderText="想说点什么"
+                        Text="{Binding SendContent}" />
+                </DockPanel>
+            </Grid>
+        </SplitView>
+    </Border>
+
+
 </UserControl>
