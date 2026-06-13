@@ -8,6 +8,8 @@ using System.Text;
 using TouchSocket.Core;
 using TouchSocket.Http;
 
+#pragma warning disable CodeAnalysis0001 // 禁用Setup同步方法警告
+
 await Serve.RunAsync(services =>
 {
     services.AddMySqlSetup();
@@ -59,8 +61,9 @@ await Serve.RunAsync(services =>
     });
 
     // WebSocket配置（TouchSocket独立服务器，监听5003端口）
+    var httpService = new HttpService();
     var wsConfig = new TouchSocketConfig()
-        .SetListenIPHosts(new IPHost[] { new IPHost(5003) })  // WS专用端口
+        .SetListenIPHosts(5003)  // 监听 0.0.0.0:5003
         .ConfigureContainer(a =>
         {
             a.AddConsoleLogger();
@@ -71,8 +74,7 @@ await Serve.RunAsync(services =>
             a.Add<ChatWebSocketPlugin>(); // 添加聊天插件
         });
 
-    var httpService = new HttpService();
-    httpService.Setup(wsConfig);
+    httpService.Setup(wsConfig);  // 同步Setup（在4.x版本中已优化）
     services.AddSingleton(httpService);
 
     services.AddHostedService<Worker>();

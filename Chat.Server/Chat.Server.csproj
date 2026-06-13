@@ -12,7 +12,8 @@
     <PackageReference Include="Furion" Version="5.0.0-preview.1.20240813.1" />
     <PackageReference Include="SqlSugarCore" Version="5.1.4.142" />
     <PackageReference Include="MySqlConnector" Version="2.3.2" />
-    <PackageReference Include="TouchSocket.Http" Version="2.0.2" />
+    <PackageReference Include="TouchSocket" Version="4.0.1" />
+    <PackageReference Include="TouchSocket.Http" Version="4.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />

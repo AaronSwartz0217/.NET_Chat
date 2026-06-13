@@ -54,7 +54,7 @@ public class ChatWebSocketService : IDisposable
     /// </summary>
     public bool IsConnected => _webSocket?.State == WebSocketState.Open;
 
-    public ChatWebSocketService(string serverUrl = "ws://localhost:5002")
+    public ChatWebSocketService(string serverUrl = "ws://localhost:5003")
     {
         _serverUri = new Uri(serverUrl);
     }

@@ -134,9 +134,28 @@ public class ChatWebSocketPlugin : PluginBase,
             var authReq = JsonSerializer.Deserialize<WsAuthRequest>(rawText);
             if (authReq?.Token == null) return;
 
-            var principal = JwtService.ValidateToken(authReq.Token);
+            // 调试日志：打印Token信息
+            Logger.LogInformation("[WS] 收到认证请求 Token长度={Length}, 前20字符={Preview}",
+                authReq.Token.Length,
+                authReq.Token.Length > 20 ? authReq.Token.Substring(0, 20) : authReq.Token);
+
+            ClaimsPrincipal? principal;
+            try
+            {
+                principal = JwtService.ValidateToken(authReq.Token);
+            }
+            catch (Exception validateEx)
+            {
+                // 打印具体失败原因！这是关键诊断信息
+                Logger.LogError(validateEx, "[WS] Token验证抛出异常: {ExType} - {Message}",
+                    validateEx.GetType().Name, validateEx.Message);
+                await SendError(webSocket, $"认证失败：{validateEx.Message}");
+                return;
+            }
+
             if (principal == null)
             {
+                Logger.LogWarning("[WS] Token验证返回null - Token格式正确但签名/有效期/Issuer/Audience不匹配");
                 await SendError(webSocket, "认证失败：无效的Token");
                 return;
             }
