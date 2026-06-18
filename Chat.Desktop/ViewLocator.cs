@@ -23,6 +23,14 @@ namespace Chat.Desktop
                                               .Replace("ViewModel", "View", StringComparison.Ordinal);
             var type = Type.GetType(name);
 
+            // 兜底：如果 Views 子命名空间找不到，尝试根命名空间
+            if (type == null)
+            {
+                name = param.GetType().FullName!.Replace(".ViewModels.", ".", StringComparison.Ordinal)
+                                                  .Replace("ViewModel", "View", StringComparison.Ordinal);
+                type = Type.GetType(name);
+            }
+
             if (type != null)
             {
                 return (Control)Activator.CreateInstance(type)!;

@@ -1,0 +1,252 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:Chat.Desktop.ViewModels"
+             xmlns:m="using:Chat.Desktop.Models"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Chat.Desktop"
+             mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="650"
+             x:Class="Chat.Desktop.ProfileView"
+             x:DataType="vm:ProfileViewModel">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="16" Margin="24,16">
+            <!-- 顶部标题 -->
+            <TextBlock Text="{Binding StatusText}" FontSize="18" FontWeight="Bold"/>
+
+            <!-- 加载中提示 -->
+            <TextBlock Text="加载中..." IsVisible="{Binding IsLoading}"
+                       HorizontalAlignment="Center" Margin="0,20"/>
+
+            <!-- 用户信息卡片 -->
+            <Border IsVisible="{Binding HasProfile}" Background="{DynamicResource RegionColor}"
+                    CornerRadius="10" Padding="24,20"
+                    BorderBrush="{DynamicResource SemiBorderColor}" BorderThickness="1">
+                <StackPanel Spacing="14" DataContext="{Binding Profile}">
+                    <!-- 头像 + 名称 -->
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <Border Width="64" Height="64" CornerRadius="32"
+                                Background="{DynamicResource SemiPurple2Color}">
+                            <TextBlock Text="{Binding DisplayName, StringFormat={}{0}[0]}"
+                                       FontSize="26" FontWeight="Bold"
+                                       Foreground="{DynamicResource SemiPurpleColor}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Spacing="4" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding DisplayName}" FontSize="20" FontWeight="Bold"/>
+                            <StackPanel Orientation="Horizontal" Spacing="6" Opacity="0.6">
+                                <TextBlock Text="@" FontSize="12"/>
+                                <TextBlock Text="{Binding UserName}" FontSize="12"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- 状态信息：角色 / 性别 / 注册时间 / 生日 -->
+                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto" Margin="8,4,0,0">
+                        <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                            <TextBlock Text="角色" FontSize="11" Opacity="0.5"/>
+                            <TextBlock Text="{Binding Role}" FontSize="13" FontWeight="SemiBold"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="0,0,16,0">
+                            <TextBlock Text="性别" FontSize="11" Opacity="0.5"/>
+                            <TextBlock Text="{Binding GenderText}" FontSize="13" FontWeight="SemiBold"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="0,0,16,0">
+                            <TextBlock Text="注册时间" FontSize="11" Opacity="0.5"/>
+                            <TextBlock Text="{Binding FormattedCreatedTime}" FontSize="12"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="3">
+                            <TextBlock Text="生日" FontSize="11" Opacity="0.5"/>
+                            <TextBlock Text="{Binding FormattedBirthday}" FontSize="12"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- 学生档案摘要（有档案时显示） -->
+                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto" Margin="8,4,0,0"
+                          IsVisible="{Binding No, Converter={x:Static local:StringNotEmptyConverter.Instance}}">
+                        <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                            <TextBlock Text="学号" FontSize="11" Opacity="0.5"/>
+                            <TextBlock Text="{Binding No}" FontSize="12"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="0,0,16,0">
+                            <TextBlock Text="姓名" FontSize="11" Opacity="0.5"/>
+                            <TextBlock Text="{Binding Name}" FontSize="12"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="0,0,16,0">
+                            <TextBlock Text="身高" FontSize="11" Opacity="0.5"/>
+                            <TextBlock Text="{Binding Height, StringFormat={}{0}cm}" FontSize="12"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="3">
+                            <TextBlock Text="体重" FontSize="11" Opacity="0.5"/>
+                            <TextBlock Text="{Binding Weight, StringFormat={}{0}kg}" FontSize="12"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- 个性签名 -->
+                    <StackPanel IsVisible="{Binding Signature, Converter={x:Static local:StringNotEmptyConverter.Instance}}"
+                               Margin="8,4,0,0">
+                        <TextBlock Text="个性签名" FontSize="11" Opacity="0.5"/>
+                        <TextBlock Text="{Binding Signature}" FontSize="13" Opacity="0.8"
+                                   TextWrapping="Wrap" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- ===== 编辑资料区域（含学生档案）===== -->
+            <Border Background="{DynamicResource RegionColor}" CornerRadius="8" Padding="20,16"
+                    BorderBrush="{DynamicResource SemiBorderColor}" BorderThickness="1"
+                    IsVisible="{Binding HasProfile}">
+                <StackPanel Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0" Text="编辑资料" FontSize="15" FontWeight="SemiBold"/>
+                        <Button Grid.Column="1" Content="编辑" Command="{Binding StartEditProfileCommand}"
+                                Classes="Outline" Padding="10,4" FontSize="12"
+                                IsVisible="{Binding !IsEditingProfile}"/>
+                    </Grid>
+
+                    <!-- 编辑表单 -->
+                    <StackPanel Spacing="10" IsVisible="{Binding IsEditingProfile}">
+
+                        <!-- 基本资料 -->
+                        <TextBlock Text="基本资料" FontSize="13" FontWeight="SemiBold" Opacity="0.7"/>
+
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="昵称 *" FontSize="12" Opacity="0.6"/>
+                            <TextBox Text="{Binding EditNickname}" Watermark="输入昵称..."
+                                     Height="36" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="个性签名" FontSize="12" Opacity="0.6"/>
+                            <TextBox Text="{Binding EditSignature}" Watermark="写点什么介绍自己..."
+                                     AcceptsReturn="True" TextWrapping="Wrap"
+                                     MinHeight="60" MaxHeight="100" FontSize="13"/>
+                        </StackPanel>
+
+                        <!-- 学生档案 -->
+                        <TextBlock Text="学生档案" FontSize="13" FontWeight="SemiBold" Opacity="0.7" Margin="0,8,0,0"/>
+
+                        <!-- 学号 + 姓名 + 身份证号（三列） -->
+                        <Grid ColumnDefinitions="*,*,*">
+                            <StackPanel Grid.Column="0" Spacing="3" Margin="0,0,6,0">
+                                <TextBlock Text="学号" FontSize="12" Opacity="0.6"/>
+                                <TextBox Text="{Binding EditNo}" Watermark="如 2024001"
+                                         Height="34" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="3" Margin="0,0,6,0">
+                                <TextBlock Text="真实姓名" FontSize="12" Opacity="0.6"/>
+                                <TextBox Text="{Binding EditName}" Watermark="真实姓名"
+                                         Height="34" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Spacing="3">
+                                <TextBlock Text="身份证号" FontSize="12" Opacity="0.6"/>
+                                <TextBox Text="{Binding EditIdNumber}" Watermark="18位身份证号"
+                                         Height="34" FontSize="12"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 性别 + 民族 + 籍贯（三列） -->
+                        <Grid ColumnDefinitions="*,*,*">
+                            <StackPanel Grid.Column="0" Spacing="3" Margin="0,0,6,0">
+                                <TextBlock Text="性别" FontSize="12" Opacity="0.6"/>
+                                <ComboBox SelectedIndex="{Binding EditGender}" Height="34" FontSize="12">
+                                    <ComboBoxItem Content="未选择"/>
+                                    <ComboBoxItem Content="男"/>
+                                    <ComboBoxItem Content="女"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="3" Margin="0,0,6,0">
+                                <TextBlock Text="民族" FontSize="12" Opacity="0.6"/>
+                                <ComboBox SelectedIndex="{Binding EditEthnicGroup}" Height="34" FontSize="12">
+                                    <ComboBoxItem Content="未选择"/>
+                                    <ComboBoxItem Content="汉族"/>
+                                    <ComboBoxItem Content="壮族"/>
+                                    <ComboBoxItem Content="满族"/>
+                                    <ComboBoxItem Content="回族"/>
+                                    <ComboBoxItem Content="苗族"/>
+                                    <ComboBoxItem Content="维吾尔族"/>
+                                    <ComboBoxItem Content="藏族"/>
+                                    <ComboBoxItem Content="蒙古族"/>
+                                    <ComboBoxItem Content="其他"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Spacing="3">
+                                <TextBlock Text="籍贯" FontSize="12" Opacity="0.6"/>
+                                <TextBox Text="{Binding EditNativePlace}" Watermark="如 北京、江苏"
+                                         Height="34" FontSize="12"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 生日 + 身高 + 体重（三列） -->
+                        <Grid ColumnDefinitions="*,*,*">
+                            <StackPanel Grid.Column="0" Spacing="3" Margin="0,0,6,0">
+                                <TextBlock Text="出生日期" FontSize="12" Opacity="0.6"/>
+                                <DatePicker SelectedDate="{Binding EditBirthday}" Height="34" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="3" Margin="0,0,6,0">
+                                <TextBlock Text="身高(cm)" FontSize="12" Opacity="0.6"/>
+                                <TextBox Text="{Binding EditHeight}" Watermark="如 175"
+                                         Height="34" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Spacing="3">
+                                <TextBlock Text="体重(kg)" FontSize="12" Opacity="0.6"/>
+                                <TextBox Text="{Binding EditWeight}" Watermark="如 65"
+                                         Height="34" FontSize="12"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 按钮 -->
+                        <Grid ColumnDefinitions="Auto,Auto" Margin="0,6,0,0">
+                            <Button Grid.Column="0" Content="保存" Command="{Binding SaveProfileCommand}"
+                                    Classes="Primary" Padding="18,7" FontSize="12" Margin="0,0,8,0"/>
+                            <Button Grid.Column="1" Content="取消" Command="{Binding CancelEditProfileCommand}"
+                                    Classes="Outline" Padding="18,7" FontSize="12"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 修改密码区域 -->
+            <Border Background="{DynamicResource RegionColor}" CornerRadius="8" Padding="20,16"
+                    BorderBrush="{DynamicResource SemiBorderColor}" BorderThickness="1"
+                    IsVisible="{Binding HasProfile}">
+                <StackPanel Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0" Text="安全设置" FontSize="15" FontWeight="SemiBold"/>
+                        <Button Grid.Column="1" Content="修改密码" Command="{Binding StartChangePasswordCommand}"
+                                Classes="Outline" Padding="10,4" FontSize="12"
+                                IsVisible="{Binding !IsChangingPassword}"/>
+                    </Grid>
+
+                    <!-- 修改密码表单 -->
+                    <StackPanel Spacing="10" IsVisible="{Binding IsChangingPassword}">
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="当前密码" FontSize="12" Opacity="0.6"/>
+                            <TextBox Text="{Binding OldPassword}" Watermark="输入当前密码..."
+                                     PasswordChar="*" Height="36" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="新密码" FontSize="12" Opacity="0.6"/>
+                            <TextBox Text="{Binding NewPassword}" Watermark="输入新密码（至少6位）..."
+                                     PasswordChar="*" Height="36" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="确认新密码" FontSize="12" Opacity="0.6"/>
+                            <TextBox Text="{Binding ConfirmPassword}" Watermark="再次输入新密码..."
+                                     PasswordChar="*" Height="36" FontSize="13"/>
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="Auto,Auto" Margin="0,6,0,0">
+                            <Button Grid.Column="0" Content="确认修改" Command="{Binding SubmitChangePasswordCommand}"
+                                    Classes="Primary" Padding="18,7" FontSize="12" Margin="0,0,8,0"/>
+                            <Button Grid.Column="1" Content="取消" Command="{Binding CancelChangePasswordCommand}"
+                                    Classes="Outline" Padding="18,7" FontSize="12"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

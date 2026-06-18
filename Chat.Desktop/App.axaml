@@ -16,7 +16,5 @@
     <Application.Styles>
         <semi:SemiTheme Locale="zh-CN" />
         <semi:UrsaSemiTheme Locale="zh-CN"/>
-        <semi:DataGridSemiTheme />
-
     </Application.Styles>
 </Application>

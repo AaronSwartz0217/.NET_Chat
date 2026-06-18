@@ -3,24 +3,22 @@
         xmlns:vm="using:Chat.Desktop.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        
         xmlns:u="https://irihi.tech/ursa"
-        xmlns:views="using:Chat.Desktop"
+        xmlns:local="using:Chat.Desktop"
 
-        
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
         x:Class="Chat.Desktop.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
+        x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="聊天室">
+        Title="Chat_v - Real-time Chat &amp; Forum"
+        Width="900"
+        Height="600"
+        MinWidth="700"
+        MinHeight="450">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainViewModel/>
     </Design.DataContext>
 
-    <views:MainView/>
-
-    
+    <local:MainView/>
 </u:UrsaWindow>

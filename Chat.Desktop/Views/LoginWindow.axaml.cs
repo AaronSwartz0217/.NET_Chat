@@ -2,30 +2,15 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Chat.Desktop.ViewModels;
-using Chat.Desktop.Views;
 using System.Threading.Tasks;
-using Ursa.Controls;
 
-namespace Chat.Desktop;
-
-public partial class LoginWindow : SplashWindow
+namespace Chat.Desktop
 {
-    public LoginWindow()
+    public partial class LoginWindow : Window
     {
-        InitializeComponent();
-    }
-
-    protected override Task<Window?> CreateNextWindow()
-    {
-        if (DialogResult is false)
+        public LoginWindow()
         {
-            return Task.FromResult<Window?>(null);
+            InitializeComponent();
         }
-
-        return Task.FromResult<Window?>(new MainWindow()
-        {
-            DataContext = new MainWindowViewModel()
-        });
     }
-
 }

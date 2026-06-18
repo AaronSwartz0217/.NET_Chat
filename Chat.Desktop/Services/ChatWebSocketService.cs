@@ -1,9 +1,14 @@
+using System;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Chat.Desktop.Models;
 
-namespace Chat.Desktop.Services;
+namespace Chat.Desktop.Services
+{
 
 /// <summary>
 /// 客户端WebSocket服务
@@ -35,9 +40,9 @@ public class ChatWebSocketService : IDisposable
     public event Action<string, bool>? OnUserOnlineChanged;
 
     /// <summary>
-    /// 在线用户列表更新事件
+    /// 在线用户列表更新事件（强类型）
     /// </summary>
-    public event Action<List<string>>? OnOnlineListUpdated;
+    public event Action<List<OnlineUserModel>>? OnOnlineListUpdated;
 
     /// <summary>
     /// 系统消息事件
@@ -54,9 +59,9 @@ public class ChatWebSocketService : IDisposable
     /// </summary>
     public bool IsConnected => _webSocket?.State == WebSocketState.Open;
 
-    public ChatWebSocketService(string serverUrl = "ws://localhost:5003")
+    public ChatWebSocketService(string? serverUrl = null)
     {
-        _serverUri = new Uri(serverUrl);
+        _serverUri = new Uri(serverUrl ?? AppConfig.WsUrl);
     }
 
     /// <summary>
@@ -64,7 +69,11 @@ public class ChatWebSocketService : IDisposable
     /// </summary>
     public async Task ConnectAsync(string token, int userId)
     {
-        if (IsConnected) return;
+        if (IsConnected)
+        {
+            System.Diagnostics.Debug.WriteLine("[WS] 已连接，跳过");
+            return;
+        }
 
         try
         {
@@ -72,23 +81,33 @@ public class ChatWebSocketService : IDisposable
             _currentUserId = userId;
             _cts = new CancellationTokenSource();
 
+            System.Diagnostics.Debug.WriteLine($"[WS] 正在连接 {_serverUri}...");
+
             _webSocket = new ClientWebSocket();
             await _webSocket.ConnectAsync(_serverUri, _cts.Token);
 
-            Console.WriteLine("[WS客户端] 已连接到服务器");
+            System.Diagnostics.Debug.WriteLine("[WS] TCP连接成功，发送认证消息...");
 
             // 发送认证消息
             var authMsg = new { type = "auth", token = _accessToken };
-            await SendRawAsync(JsonSerializer.Serialize(authMsg));
+            var authJson = JsonSerializer.Serialize(authMsg);
+            System.Diagnostics.Debug.WriteLine($"[WS] 认证消息: Token长度={_accessToken?.Length ?? 0}");
+
+            await SendRawAsync(authJson);
+
+            System.Diagnostics.Debug.WriteLine("[WS] 认证消息已发送，启动接收循环...");
 
             // 启动接收循环
             _receiveTask = ReceiveLoopAsync(_cts.Token);
 
             OnConnectionChanged?.Invoke(true);
+            System.Diagnostics.Debug.WriteLine("[WS] 连接完成！");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[WS客户端] 连接失败: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[WS] 连接失败: {ex.GetType().Name} - {ex.Message}");
+            if (ex.InnerException != null)
+                System.Diagnostics.Debug.WriteLine($"[WS] 内部异常: {ex.InnerException.Message}");
             OnConnectionChanged?.Invoke(false);
         }
     }
@@ -123,7 +142,13 @@ public class ChatWebSocketService : IDisposable
     /// </summary>
     public async Task SendChatAsync(string content, int? toUserId = null, int? channelId = null)
     {
-        if (!IsConnected) return;
+        System.Diagnostics.Debug.WriteLine($"[WS] SendChatAsync: content={content}, connected={IsConnected}, state={_webSocket?.State}");
+
+        if (!IsConnected)
+        {
+            System.Diagnostics.Debug.WriteLine("[WS] SendChatAsync: 未连接，跳过");
+            return;
+        }
 
         var msg = new
         {
@@ -132,7 +157,9 @@ public class ChatWebSocketService : IDisposable
             toUserId,
             channelId
         };
-        await SendRawAsync(JsonSerializer.Serialize(msg));
+        var json = JsonSerializer.Serialize(msg);
+        System.Diagnostics.Debug.WriteLine($"[WS] SendChatAsync: 发送 {json}");
+        await SendRawAsync(json);
     }
 
     /// <summary>
@@ -252,19 +279,17 @@ public class ChatWebSocketService : IDisposable
         var content = root.TryGetProperty("content", out var contentEl) ? contentEl.GetString() ?? "" : "";
         var fromUserId = root.TryGetProperty("fromUserId", out var uidEl) ? uidEl.GetInt32() : 0;
 
-        bool isSelf = fromUserId == _currentUserId;
+        // 跳过自己的消息（SendClick 已在本地显示）
+        if (fromUserId == _currentUserId)
+            return;
 
         var chatModel = new ChatModel
         {
-            NickName = isSelf ? "我" : fromUserName,
+            NickName = fromUserName,
             Content = content,
             SendTime = DateTime.Now,
-            TextAlignment = isSelf
-                ? Avalonia.Layout.HorizontalAlignment.Right
-                : Avalonia.Layout.HorizontalAlignment.Left,
-            TextDock = isSelf
-                ? Avalonia.Controls.Dock.Right
-                : Avalonia.Controls.Dock.Left
+            TextAlignment = Avalonia.Layout.HorizontalAlignment.Left,
+            TextDock = Avalonia.Controls.Dock.Left
         };
 
         OnMessageReceived?.Invoke(chatModel);
@@ -278,7 +303,7 @@ public class ChatWebSocketService : IDisposable
 
     private void HandleOnlineList(JsonElement root)
     {
-        var users = new List<string>();
+        var users = new List<OnlineUserModel>();
         if (root.TryGetProperty("content", out var contentEl))
         {
             try
@@ -286,9 +311,19 @@ public class ChatWebSocketService : IDisposable
                 using var userDoc = JsonDocument.Parse(contentEl.GetString() ?? "[]");
                 foreach (var user in userDoc.RootElement.EnumerateArray())
                 {
-                    var nickname = user.TryGetProperty("nickname", out var nn) ? nn.GetString() : "";
+                    var userId = user.TryGetProperty("userId", out var uid) ? uid.GetInt32() : 0;
                     var userName = user.TryGetProperty("userName", out var un) ? un.GetString() : "";
-                    users.Add(!string.IsNullOrEmpty(nickname) ? nickname : userName);
+                    var nickname = user.TryGetProperty("nickname", out var nn) ? nn.GetString() : "";
+                    var avatar = user.TryGetProperty("avatar", out var av) ? av.GetString() : null;
+
+                    users.Add(new OnlineUserModel
+                    {
+                        UserId = userId,
+                        UserName = userName,
+                        NickName = nickname,
+                        Avatar = avatar,
+                        OnlineTime = DateTime.Now
+                    });
                 }
             }
             catch { /* 解析失败忽略 */ }
@@ -323,11 +358,23 @@ public class ChatWebSocketService : IDisposable
     /// </summary>
     private async Task SendRawAsync(string json)
     {
-        if (!IsConnected || _webSocket == null) return;
+        if (!IsConnected || _webSocket == null)
+        {
+            System.Diagnostics.Debug.WriteLine($"[WS] SendRawAsync: 未连接或socket为空, connected={IsConnected}, socket={(_webSocket != null ? _webSocket.State.ToString() : "null")}");
+            return;
+        }
 
-        var bytes = Encoding.UTF8.GetBytes(json);
-        var segment = new ArraySegment<byte>(bytes);
-        await _webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+        try
+        {
+            var bytes = Encoding.UTF8.GetBytes(json);
+            var segment = new ArraySegment<byte>(bytes);
+            await _webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+            System.Diagnostics.Debug.WriteLine("[WS] SendRawAsync: 发送成功");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[WS] SendRawAsync 异常: {ex.Message}");
+        }
     }
 
     public void Dispose()
@@ -337,4 +384,5 @@ public class ChatWebSocketService : IDisposable
         DisconnectAsync().GetAwaiter().GetResult();
         _cts?.Dispose();
     }
+}
 }

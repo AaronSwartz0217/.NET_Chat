@@ -66,12 +66,15 @@ public class ChatWebSocketPlugin : PluginBase,
     private async Task HandleTextMessage(IWebSocket webSocket, string text)
     {
         var clientId = GetClientId(webSocket);
+        Logger.LogInformation("[WS] 收到文本消息: {Text}", text.Length > 100 ? text.Substring(0, 100) + "..." : text);
 
         try
         {
             using var doc = JsonDocument.Parse(text);
             var root = doc.RootElement;
             var msgType = root.TryGetProperty("type", out var typeEl) ? typeEl.GetString() ?? "chat" : "chat";
+
+            Logger.LogInformation("[WS] 消息类型: {Type}", msgType);
 
             switch (msgType)
             {
@@ -86,6 +89,9 @@ public class ChatWebSocketPlugin : PluginBase,
                     break;
                 case "read":
                     await HandleReadReceipt(webSocket, text);
+                    break;
+                default:
+                    Logger.LogWarning("[WS] 未知消息类型: {Type}", msgType);
                     break;
             }
         }

@@ -2,89 +2,285 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="using:Chat.Desktop.ViewModels"
+             xmlns:m="using:Chat.Desktop.Models"
+             xmlns:cvt="using:Chat.Desktop.Converters"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="550"
              x:Class="Chat.Desktop.ChatView"
              x:DataType="vm:ChatViewModel">
-  
 
-    <Border>
-		<SplitView
-            DisplayMode="Inline"
-            IsPaneOpen="True"
-            OpenPaneLength="200"
-            PanePlacement="Left"
-            UseLightDismissOverlayMode="True">
-            <SplitView.Pane>
-                <ListBox />
-            </SplitView.Pane>
+    <Border CornerRadius="8">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <!-- 顶部状态栏 -->
+            <Border Grid.Row="0"
+                    Height="50"
+                    Background="{DynamicResource SemiPurple2Color}"
+                    CornerRadius="8,8,0,0">
+                <DockPanel Margin="16,0" VerticalAlignment="Center">
+                    <!-- 左侧：用户信息 -->
+                    <StackPanel DockPanel.Dock="Left"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="0,0,10,0">
+                        <PathIcon Width="20"
+                                  Data="{DynamicResource SemiIconUser}"
+                                  Foreground="{DynamicResource SemiPurpleColor}"
+                                  Margin="0,0,10,0" />
+                        <TextBlock Text="{Binding CurrentUserName}"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="(you)"
+                                   FontSize="11"
+                                   Opacity="0.5"
+                                   VerticalAlignment="Center"
+                                   Margin="4,0,0,0" />
+                    </StackPanel>
 
-            <Grid RowDefinitions="*,Auto">
-                <ScrollViewer 
-                    Grid.Row="0" 
-                    Grid.Column="0" 
-                    Margin="10 30 10 0"
-                    VerticalScrollBarVisibility="Auto" 
-                    HorizontalScrollBarVisibility="Auto" 
-                    HorizontalAlignment="Stretch" 
-                    VerticalAlignment="Stretch"
-                    AllowAutoHide="False"
-                    MinWidth="700">
-                    <ItemsControl 
-                        ItemsSource="{Binding ChatLists}">
-                        <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel 
-                                Margin="0 0 0 10" 
-                                HorizontalSpacing="10"
-                                HorizontalAlignment="{Binding TextAlignment}">
-                                <PathIcon DockPanel.Dock="{Binding TextDock}"
-                                    Classes="Large" 
-                                    Data="{StaticResource SemiIconUser}" />
-                                
-                                <StackPanel Orientation="Vertical">
-                                    <DockPanel HorizontalSpacing="10">
-										<TextBlock 
-                                            DockPanel.Dock="{Binding TextDock}"
-                                            Text="{Binding NickName}" />
-                                        <u:DateDisplay
-                                            StringFormat="HH:mm"
-                                            IsSelectable="False"
-                                            Value="{Binding SendTime}" />
+                    <!-- 中间：连接状态 + 聊天模式 -->
+                    <StackPanel HorizontalAlignment="Center"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="0,0,12,0">
+                        <!-- 连接状态指示灯 -->
+                        <Ellipse Width="8"
+                                 Height="8"
+                                 Fill="{Binding IsConnected,
+                                     Converter={x:Static cvt:BooleanToBrushConverter.Instance},
+                                     FallbackValue={DynamicResource SemiDangerColor}}" />
+                        <TextBlock Text="{Binding StatusText}"
+                                   FontSize="12"
+                                   Opacity="0.8"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0" />
+
+                        <!-- 私聊模式时显示返回群聊按钮 -->
+                        <Button Content="&lt;- Group"
+                                Command="{Binding SwitchToGroupChatCommand}"
+                                IsVisible="{Binding IsPrivateChat}"
+                                Classes="Hyperlink"
+                                FontSize="12"
+                                Margin="12,0,0,0" />
+                    </StackPanel>
+
+                    <!-- 右侧：在线人数 + 退出登录 -->
+                    <StackPanel DockPanel.Dock="Right"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Opacity="0.7"
+                                Margin="0,0,0,0">
+                        <!-- 在线人数 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                            <PathIcon Width="14" Data="{DynamicResource SemiIconPeopleGroup}" Margin="0,0,6,0" />
+                            <TextBlock FontSize="12">
+                                <Run Text="Online " />
+                                <Run Text="{Binding OnlineUsers.Count}" FontWeight="Bold" />
+                                <Run Text=" ppl" />
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- 退出登录按钮 -->
+                        <Button Content="Logout"
+                                Command="{Binding LogoutCommand}"
+                                Classes="Hyperlink"
+                                FontSize="12"
+                                Foreground="{DynamicResource SemiDangerColor}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- 主体区域：左侧用户列表 + 右侧消息区 -->
+            <Grid Grid.Row="1" ColumnDefinitions="180,*">
+                <!-- 左侧：在线用户列表 -->
+                <Border BorderBrush="{DynamicResource SemiBorderColor}"
+                      BorderThickness="0,0,1,0"
+                      Background="{DynamicResource RegionColor}">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top"
+                                   Text="Online Users"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   Margin="12,10"
+                                   Opacity="0.7" />
+
+                        <ListBox ItemsSource="{Binding OnlineUsers}"
+                                 SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
+                                 Margin="4,0,4,8"
+                                 BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="m:OnlineUserModel">
+                                    <DockPanel Margin="6,4">
+                                        <!-- 头像占位 -->
+                                        <Border DockPanel.Dock="Left"
+                                                Width="32"
+                                                Height="32"
+                                                CornerRadius="16"
+                                                Background="{DynamicResource SemiPurple2Color}"
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding DisplayName,
+                                                StringFormat={}{0}[0]}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="12"
+                                                       FontWeight="Bold"
+                                                       Foreground="{DynamicResource SemiPurpleColor}" />
+                                        </Border>
+
+                                        <!-- 用户信息 -->
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding DisplayName}"
+                                                       FontSize="13"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="Online"
+                                                       FontSize="10"
+                                                       Opacity="0.5" />
+                                        </StackPanel>
                                     </DockPanel>
-                                    <SelectableTextBlock 
-                                        HorizontalAlignment="{Binding TextAlignment}"
-                                        Text="{Binding Content}" />
-                                </StackPanel>
-                                
-                            </DockPanel>
-                        </DataTemplate>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+
+                <!-- 右侧：消息列表 -->
+                <ScrollViewer Grid.Column="1"
+                              Margin="10,8"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding ChatLists}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="m:ChatModel">
+                                <!-- 消息容器：根据类型切换内容 -->
+                                <DockPanel Margin="0,4,0,8"
+                                           HorizontalAlignment="{Binding TextAlignment}"
+                                           MaxWidth="500">
+
+                                    <!-- 系统消息样式 -->
+                                    <Border IsVisible="{Binding IsSystem}"
+                                            Background="{DynamicResource SemiFillColor}"
+                                            CornerRadius="12"
+                                            Padding="10,4"
+                                            Opacity="0.7"
+                                            HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Content}"
+                                                   FontSize="11"
+                                                   Opacity="0.7" />
+                                    </Border>
+
+                                    <!-- 普通聊天消息样式 -->
+                                    <StackPanel IsVisible="{Binding IsChatMessage}"
+                                                HorizontalAlignment="{Binding TextAlignment}"
+                                                Margin="0,0,0,0">
+
+                                        <!-- 头像（仅左侧他人消息显示） -->
+                                        <Border DockPanel.Dock="{Binding TextDock}"
+                                                Width="36"
+                                                Height="36"
+                                                CornerRadius="18"
+                                                Margin="0,0,6,0"
+                                                Background="{DynamicResource SemiBlue2Color}"
+                                                VerticalAlignment="Bottom"
+                                                IsVisible="{Binding IsOthersMessage}">
+                                            <TextBlock Text="{Binding NickName,
+                                                        StringFormat={}{0}[0]}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="13"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource SemiBlueColor}" />
+                                        </Border>
+
+                                        <!-- 昵称 + 时间（左侧消息） -->
+                                        <DockPanel Margin="0,0,0,2"
+                                                   IsVisible="{Binding IsOthersMessage}">
+                                            <TextBlock DockPanel.Dock="Left"
+                                                       Text="{Binding NickName}"
+                                                       FontSize="12"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource SemiPrimaryColor}" />
+                                            <TextBlock Text="{Binding FormattedTime}"
+                                                       FontSize="10"
+                                                       Opacity="0.45"
+                                                       HorizontalAlignment="Right" />
+                                        </DockPanel>
+
+                                        <!-- 自己的消息只显示时间在右侧 -->
+                                        <TextBlock IsVisible="{Binding IsOwnMessage}"
+                                                   Text="{Binding FormattedTime}"
+                                                   FontSize="10"
+                                                   Opacity="0.45"
+                                                   HorizontalAlignment="Right"
+                                                   Margin="0,0,0,2" />
+
+                                        <!-- 消息气泡：自己发的（蓝色底+白字，靠右） -->
+                                        <Border Background="{DynamicResource SemiBlueColor}"
+                                                CornerRadius="12"
+                                                Padding="10,8"
+                                                MaxWidth="400"
+                                                HorizontalAlignment="{Binding TextAlignment}"
+                                                IsVisible="{Binding IsOwnMessage}">
+                                            <TextBlock Text="{Binding Content}"
+                                                               TextWrapping="Wrap"
+                                                               FontSize="14"
+                                                               Foreground="White" />
+                                        </Border>
+
+                                        <!-- 消息气泡：对方发的（白色底+黑字，靠左） -->
+                                        <Border Background="White"
+                                                CornerRadius="12"
+                                                Padding="10,8"
+                                                MaxWidth="400"
+                                                HorizontalAlignment="{Binding TextAlignment}"
+                                                BorderBrush="{DynamicResource SemiBorderColor}"
+                                                BorderThickness="1"
+                                                IsVisible="{Binding IsOthersMessage}">
+                                            <TextBlock Text="{Binding Content}"
+                                                               TextWrapping="Wrap"
+                                                               FontSize="14"
+                                                               Foreground="Black" />
+                                        </Border>
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    </ScrollViewer>
-
-                <DockPanel 
-                    Grid.Row="1" 
-                    HorizontalSpacing="5"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Bottom">
-                    <u:IconButton 
-                        DockPanel.Dock="Right"
-                        Width="150"
-                        VerticalAlignment="Stretch"
-                        Icon="{StaticResource SemiIconSend}" 
-                        Content="发送" 
-                        Command="{Binding SendClickCommand}" />
-                    <TextBox 
-                        Classes="TextArea ClearButton"
-                        HorizontalAlignment="Stretch"
-                        PlaceholderText="想说点什么"
-                        Text="{Binding SendContent}" />
-                </DockPanel>
+                </ScrollViewer>
             </Grid>
-        </SplitView>
+
+            <!-- 底部输入框 -->
+            <Border Grid.Row="2"
+                    Height="60"
+                    Background="{DynamicResource RegionColor}"
+                    BorderThickness="0,1,0,0"
+                    BorderBrush="{DynamicResource SemiBorderColor}"
+                    CornerRadius="0,0,8,8">
+                <DockPanel Margin="12,0"
+                           VerticalAlignment="Center">
+                    <!-- 发送按钮 -->
+                    <Button DockPanel.Dock="Right"
+                            Classes="Primary"
+                            MinWidth="80"
+                            MinHeight="40"
+                            Padding="16,8"
+                            Command="{Binding SendClickCommand}"
+                            Margin="8,0,0,0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <PathIcon Width="16" Height="16" Data="{StaticResource SemiIconSend}" />
+                            <TextBlock Text="发送" FontSize="13" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- 输入框（始终可用） -->
+                    <TextBox Classes="TextArea ClearButton"
+                             PlaceholderText="{Binding InputPlaceholder}"
+                             Text="{Binding SendContent}"
+                             AcceptsReturn="False" />
+                </DockPanel>
+            </Border>
+        </Grid>
     </Border>
-
-
 </UserControl>

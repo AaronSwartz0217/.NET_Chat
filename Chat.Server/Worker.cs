@@ -41,12 +41,13 @@ public class Worker : BackgroundService
     }
 
     /// <summary>
-    /// 初始化管理员账户
+    /// 初始化默认账户
     /// </summary>
     private async Task InitializeAdminAccount()
     {
         try
         {
+            // 管理员账户
             var adminUser = await _db.Queryable<User>()
                 .FirstAsync(u => u.UserName == "admin");
 
@@ -65,14 +66,30 @@ public class Worker : BackgroundService
                 await _db.Insertable(user).ExecuteCommandAsync();
                 _logger.LogInformation("管理员账户已创建: admin / 123456");
             }
-            else
+
+            // lds 测试账户
+            var ldsUser = await _db.Queryable<User>()
+                .FirstAsync(u => u.UserName == "lds");
+
+            if (ldsUser == null)
             {
-                _logger.LogInformation("管理员账户已存在");
+                var user = new User
+                {
+                    UserName = "lds",
+                    Password = "123456",
+                    Nickname = "lds",
+                    Role = "user",
+                    LastLoginTime = DateTime.UtcNow,
+                    CreatedTime = DateTime.UtcNow
+                };
+
+                await _db.Insertable(user).ExecuteCommandAsync();
+                _logger.LogInformation("测试账户已创建: lds / 123456");
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "初始化管理员账户失败");
+            _logger.LogError(ex, "初始化默认账户失败");
         }
     }
 

@@ -70,8 +70,13 @@ await Serve.RunAsync(services =>
         })
         .ConfigurePlugins(a =>
         {
-            a.UseWebSocket();           // 启用WebSocket协议
-            a.Add<ChatWebSocketPlugin>(); // 添加聊天插件
+            // TouchSocket 4.0: 必须使用 options 设置 WS 路径
+            a.UseWebSocket(options =>
+            {
+                options.SetUrl("/");           // 接受根路径的 WS 连接
+                options.SetAutoPong(true);      // 自动响应 Ping
+            });
+            a.Add<ChatWebSocketPlugin>();       // 添加聊天插件
         });
 
     httpService.Setup(wsConfig);  // 同步Setup（在4.x版本中已优化）
