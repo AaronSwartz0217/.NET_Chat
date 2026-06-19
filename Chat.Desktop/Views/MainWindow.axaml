@@ -5,20 +5,119 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:u="https://irihi.tech/ursa"
         xmlns:local="using:Chat.Desktop"
+        xmlns:semi="https://irihi.tech/semi"
 
-        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+        mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="700"
         x:Class="Chat.Desktop.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Chat_v - Real-time Chat &amp; Forum"
-        Width="900"
-        Height="600"
-        MinWidth="700"
-        MinHeight="450">
+        Title="天涯世界 - 实时聊天与论坛"
+        Width="1100"
+        Height="700"
+        MinWidth="900"
+        MinHeight="600"
+        Background="{DynamicResource SemiColor10}">
 
     <Design.DataContext>
         <vm:MainViewModel/>
     </Design.DataContext>
 
-    <local:MainView/>
+    <DockPanel>
+        <!-- 左侧导航栏 -->
+        <Border DockPanel.Dock="Left" Width="220" Background="{DynamicResource SemiColor7}">
+            <Grid RowDefinitions="Auto,*,Auto">
+                <!-- 顶部：头像和用户名 -->
+                <StackPanel Grid.Row="0" Margin="0,24,0,20" HorizontalAlignment="Center">
+                    <!-- 头像圆形 -->
+                    <Border CornerRadius="50" Width="80" Height="80" Background="{DynamicResource SemiColor1}">
+                        <TextBlock Text="{Binding CurrentUserName[0]}" 
+                                   FontSize="36" FontWeight="Bold" 
+                                   Foreground="{DynamicResource SemiColor7}"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+                    <!-- 用户名 -->
+                    <TextBlock Text="{Binding CurrentUserName}" 
+                               FontSize="16" FontWeight="SemiBold" 
+                               Margin="0,12,0,0" 
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource SemiColor}"/>
+                    <TextBlock Text="在线" FontSize="12" 
+                               Opacity="0.6" Margin="0,4,0,0"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource SemiColor}"/>
+                </StackPanel>
+
+                <!-- 中间：导航菜单 -->
+                <StackPanel Grid.Row="1" Spacing="4" Margin="12,0">
+                    <!-- 我的 -->
+                    <Button Command="{Binding SwitchToProfileCommand}"
+                            Classes="NavMenuButton"
+                            Background="{Binding SelectedTabIndex, Converter={x:Static local:TabBgConverter.Instance}, ConverterParameter=0}">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="我的" FontSize="14" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+
+                    <!-- 聊天室 -->
+                    <Button Command="{Binding SwitchToChatCommand}"
+                            Classes="NavMenuButton"
+                            Background="{Binding SelectedTabIndex, Converter={x:Static local:TabBgConverter.Instance}, ConverterParameter=1}">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="&#xE8BD;" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="聊天室" FontSize="14" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+
+                    <!-- 论坛 -->
+                    <Button Command="{Binding SwitchToForumCommand}"
+                            Classes="NavMenuButton"
+                            Background="{Binding SelectedTabIndex, Converter={x:Static local:TabBgConverter.Instance}, ConverterParameter=2}">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="&#xE8F1;" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="论坛" FontSize="14" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+                </StackPanel>
+
+                <!-- 底部：退出登录 + 主题切换 -->
+                <StackPanel Grid.Row="2" Margin="12,0,12,20" Spacing="8">
+                    <Rectangle Height="1" Fill="{DynamicResource SemiColor6}" Margin="0,0,0,12"/>
+                    
+                    <!-- 主题切换按钮 -->
+                    <Button x:Name="ThemeToggleButton"
+                            Classes="NavMenuButton"
+                            Command="{Binding ToggleThemeCommand}">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="&#xE793;" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="切换主题" FontSize="14" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+
+                    <!-- 退出登录 -->
+                    <Button Command="{Binding DoLogoutCommand}"
+                            Classes="NavMenuButton">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="退出登录" FontSize="14" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 右侧主内容区 -->
+        <Border Background="{DynamicResource SemiColor10}">
+            <ContentControl>
+                <ContentControl.Content>
+                    <MultiBinding Converter="{x:Static local:TabContentConverter.Instance}">
+                        <Binding Path="SelectedTabIndex"/>
+                        <Binding Path="ProfileVM"/>
+                        <Binding Path="ChatVM"/>
+                        <Binding Path="ForumVM"/>
+                    </MultiBinding>
+                </ContentControl.Content>
+            </ContentControl>
+        </Border>
+    </DockPanel>
 </u:UrsaWindow>

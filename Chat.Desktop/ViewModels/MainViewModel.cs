@@ -31,6 +31,12 @@ public partial class MainViewModel : ViewModelBase
     /// </summary>
     public event Action? OnLogoutRequested;
 
+    /// <summary>
+    /// 当前用户名
+    /// </summary>
+    [ObservableProperty]
+    private string _currentUserName = "用户";
+
     public MainViewModel()
     {
         ChatVM = new ChatViewModel();
@@ -75,6 +81,7 @@ public partial class MainViewModel : ViewModelBase
         ForumVM.SetToken(token);
         ForumVM.CurrentUserId = userId;
         ProfileVM.SetToken(token);
+        CurrentUserName = userName;
     }
 
     /// <summary>
@@ -103,6 +110,21 @@ public partial class MainViewModel : ViewModelBase
 
     [RelayCommand]
     private void SwitchToForum() => SelectedTabIndex = 2;
+
+    [RelayCommand]
+    private void ToggleTheme()
+    {
+        // 使用 Avalonia 原生 API 切换主题
+        var app = Avalonia.Application.Current;
+        if (app != null)
+        {
+            var current = app.RequestedThemeVariant;
+            app.RequestedThemeVariant = current == Avalonia.Styling.ThemeVariant.Dark
+                ? Avalonia.Styling.ThemeVariant.Light
+                : Avalonia.Styling.ThemeVariant.Dark;
+            System.Diagnostics.Debug.WriteLine($"[MainVM] 主题切换为: {app.RequestedThemeVariant}");
+        }
+    }
 
     [RelayCommand]
     private void DoLogout()

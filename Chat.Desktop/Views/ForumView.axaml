@@ -11,20 +11,24 @@
 
     <Grid RowDefinitions="Auto,*">
         <!-- 顶部工具栏 -->
-        <Border Grid.Row="0" Height="48" Background="{DynamicResource SemiFillColor}"
-                BorderBrush="{DynamicResource SemiBorderColor}" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Height="52" Background="{DynamicResource SemiColor7}"
+                BorderBrush="{DynamicResource SemiColor6}" BorderThickness="0,0,0,1">
             <Grid ColumnDefinitions="*,Auto,Auto,Auto">
-                <TextBlock Grid.Column="0" Text="{Binding StatusText}"
-                           FontSize="16" FontWeight="SemiBold"
-                           VerticalAlignment="Center" Margin="16,0"/>
+                <!-- 页面标题 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0">
+                    <TextBlock Text="&#xE8F1;" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center" Foreground="{DynamicResource SemiColor}"/>
+                    <TextBlock Text="论坛" FontSize="18" FontWeight="SemiBold" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource SemiColor}"/>
+                </StackPanel>
+
+                <!-- 操作按钮 -->
                 <Button Grid.Column="1" Content="时间排序" Command="{Binding SortByTimeCommand}"
-                        Classes="Outline" Padding="10,5" FontSize="12" Margin="0,0,6,0"
+                        Classes="Outline" Padding="12,6" FontSize="13" Margin="0,0,8,0"
                         VerticalAlignment="Center"/>
                 <Button Grid.Column="2" Content="发帖" Command="{Binding ShowCreatePostCommand}"
-                        Classes="Primary" Padding="10,5" FontSize="12" Margin="0,0,6,0"
+                        Classes="Primary" Padding="12,6" FontSize="13" Margin="0,0,8,0"
                         VerticalAlignment="Center"/>
                 <Button Grid.Column="3" Content="刷新" Command="{Binding RefreshCommand}"
-                        Classes="Outline" Padding="10,5" FontSize="12"
+                        Classes="Outline" Padding="12,6" FontSize="13" Margin="0,0,16,0"
                         VerticalAlignment="Center"/>
             </Grid>
         </Border>
@@ -54,69 +58,76 @@
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Stretch"
                                         Margin="0,4">
+                                    <Button.Styles>
+                                        <Style Selector="Button:pointerover Border#CardBorder">
+                                            <Setter Property="Background" Value="{DynamicResource SemiColor8}"/>
+                                        </Style>
+                                    </Button.Styles>
                                     <!-- 卡片内容 -->
-                                    <Border Background="{DynamicResource RegionColor}"
-                                            CornerRadius="8" Padding="12"
-                                            BorderBrush="{DynamicResource SemiBorderColor}" BorderThickness="1">
+                                    <Border x:Name="CardBorder" Background="{DynamicResource RegionColor}"
+                                            CornerRadius="10" Padding="14,12"
+                                            BorderBrush="{DynamicResource SemiColor6}" BorderThickness="1">
                                         <Grid RowDefinitions="Auto,Auto,Auto">
                                             <!-- 标题 -->
                                             <TextBlock Grid.Row="0" Text="{Binding Title}"
                                                        FontSize="15" FontWeight="SemiBold"
                                                        TextWrapping="Wrap" MaxLines="2"
-                                                       TextTrimming="CharacterEllipsis"/>
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Foreground="{DynamicResource SemiColor}"/>
 
                                             <!-- 内容预览 -->
                                             <TextBlock Grid.Row="1" Text="{Binding ShortContent}"
-                                                       FontSize="13" Opacity="0.7"
+                                                       FontSize="13" 
                                                        TextWrapping="Wrap" MaxLines="2"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Margin="0,6,0,10"/>
+                                                       Margin="0,6,0,12"
+                                                       Foreground="{DynamicResource SemiColor}"
+                                                       Opacity="0.7"/>
 
                                             <!-- 底部信息栏 -->
-                                            <Border Grid.Row="2" Background="{DynamicResource SemiFillColor}"
-                                                    CornerRadius="0,0,8,8" Padding="10,6" Margin="-12,-10,-12,-12">
-                                                <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
-                                                    <!-- 点赞按钮（独立点击） -->
-                                                    <Button Grid.Column="0" 
-                                                            Command="{Binding $parent[ItemsControl].((vm:ForumViewModel)DataContext).ToggleLikeCommand}"
-                                                            CommandParameter="{Binding}"
-                                                            Background="Transparent" BorderThickness="0"
-                                                            Padding="6,3" Cursor="Hand"
-                                                            ClickMode="Press">
-                                                        <StackPanel Orientation="Horizontal" Spacing="4">
-                                                            <TextBlock Text="{Binding IsLiked, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=❤|♡}" FontSize="13"/>
-                                                            <TextBlock Text="{Binding LikeCount}" FontSize="12" Opacity="0.7"/>
-                                                        </StackPanel>
-                                                    </Button>
-
-                                                    <!-- 收藏按钮（独立点击） -->
-                                                    <Button Grid.Column="1" 
-                                                            Command="{Binding $parent[ItemsControl].((vm:ForumViewModel)DataContext).ToggleFavoriteCommand}"
-                                                            CommandParameter="{Binding}"
-                                                            Background="Transparent" BorderThickness="0"
-                                                            Padding="6,3" Cursor="Hand"
-                                                            ClickMode="Press">
-                                                        <StackPanel Orientation="Horizontal" Spacing="4">
-                                                            <TextBlock Text="{Binding IsFavorited, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=★|☆}" FontSize="13"/>
-                                                            <TextBlock Text="收藏" FontSize="12" Opacity="0.7"/>
-                                                        </StackPanel>
-                                                    </Button>
-
-                                                    <!-- 评论数 -->
-                                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" Opacity="0.6">
-                                                        <TextBlock Text="💬" FontSize="13"/>
-                                                        <TextBlock Text="{Binding CommentCount}" FontSize="12"/>
+                                            <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,Auto,*,Auto">
+                                                <!-- 点赞按钮（独立点击） -->
+                                                <Button Grid.Column="0" 
+                                                        Command="{Binding $parent[ItemsControl].((vm:ForumViewModel)DataContext).ToggleLikeCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent" BorderThickness="0"
+                                                        Padding="8,4" Cursor="Hand"
+                                                        ClickMode="Press">
+                                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                                        <TextBlock Text="{Binding IsLiked, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=❤|♡}" FontSize="14"/>
+                                                        <TextBlock Text="{Binding LikeCount}" FontSize="12" Foreground="{DynamicResource SemiColor}" Opacity="0.7"/>
                                                     </StackPanel>
+                                                </Button>
 
-                                                    <!-- 弹性空白 -->
-                                                    <Rectangle Grid.Column="3"/>
+                                                <!-- 收藏按钮（独立点击） -->
+                                                <Button Grid.Column="1" 
+                                                        Command="{Binding $parent[ItemsControl].((vm:ForumViewModel)DataContext).ToggleFavoriteCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent" BorderThickness="0"
+                                                        Padding="8,4" Cursor="Hand"
+                                                        ClickMode="Press">
+                                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                                        <TextBlock Text="{Binding IsFavorited, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=★|☆}" FontSize="14"/>
+                                                        <TextBlock Text="收藏" FontSize="12" Foreground="{DynamicResource SemiColor}" Opacity="0.7"/>
+                                                    </StackPanel>
+                                                </Button>
 
-                                                    <!-- 时间 -->
-                                                    <TextBlock Grid.Column="4" Text="{Binding FormattedTime}"
-                                                               FontSize="11" Opacity="0.5"
-                                                               VerticalAlignment="Center"/>
-                                                </Grid>
-                                            </Border>
+                                                <!-- 评论数 -->
+                                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" Opacity="0.6" VerticalAlignment="Center" Margin="8,0,0,0">
+                                                    <TextBlock Text="💬" FontSize="13"/>
+                                                    <TextBlock Text="{Binding CommentCount}" FontSize="12" Foreground="{DynamicResource SemiColor}"/>
+                                                </StackPanel>
+
+                                                <!-- 弹性空白 -->
+                                                <Rectangle Grid.Column="3"/>
+
+                                                <!-- 时间 -->
+                                                <TextBlock Grid.Column="4" Text="{Binding FormattedTime}"
+                                                           FontSize="11" 
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource SemiColor}"
+                                                           Opacity="0.5"/>
+                                            </Grid>
                                         </Grid>
                                     </Border>
                                 </Button>
@@ -163,76 +174,92 @@
 
                     <!-- 帖子详情卡片 -->
                     <Border Background="{DynamicResource RegionColor}"
-                            CornerRadius="8" Padding="20,16"
-                            BorderBrush="{DynamicResource SemiBorderColor}" BorderThickness="1">
-                        <StackPanel Spacing="10">
+                            CornerRadius="10" Padding="20,18"
+                            BorderBrush="{DynamicResource SemiColor6}" BorderThickness="1">
+                        <StackPanel Spacing="12">
                             <!-- 标题 -->
-                            <TextBlock Text="{Binding SelectedPost.Title}" FontSize="18" FontWeight="Bold"
-                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding SelectedPost.Title}" FontSize="20" FontWeight="Bold"
+                                       TextWrapping="Wrap" Foreground="{DynamicResource SemiColor}"/>
 
                             <!-- 作者信息 + 时间 -->
-                            <StackPanel Orientation="Horizontal" Spacing="12" Opacity="0.6">
-                                <TextBlock Text="{Binding SelectedPost.UserName}" FontSize="13"/>
-                                <TextBlock Text="{Binding SelectedPost.FormattedTime}" FontSize="12"/>
+                            <StackPanel Orientation="Horizontal" Spacing="16" Opacity="0.65">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="👤" FontSize="13"/>
+                                    <TextBlock Text="{Binding SelectedPost.UserName}" FontSize="13" Foreground="{DynamicResource SemiColor}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="🕐" FontSize="13"/>
+                                    <TextBlock Text="{Binding SelectedPost.FormattedTime}" FontSize="12" Foreground="{DynamicResource SemiColor}"/>
+                                </StackPanel>
                             </StackPanel>
+
+                            <!-- 分隔线 -->
+                            <Rectangle Height="1" Fill="{DynamicResource SemiColor6}" Opacity="0.3"/>
 
                             <!-- 正文内容 -->
                             <TextBlock Text="{Binding SelectedPost.Content}" FontSize="14"
-                                       TextWrapping="Wrap" Opacity="0.85"/>
+                                       TextWrapping="Wrap" Foreground="{DynamicResource SemiColor}"/>
 
                             <!-- 操作按钮 -->
-                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,6,0,0">
+                            <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,8,0,0">
                                 <Button Command="{Binding ToggleLikeCommand}"
                                         CommandParameter="{Binding SelectedPost}"
-                                        Classes="Hyperlink" FontSize="12" Padding="6,3">
-                                    <TextBlock>
-                                        <Run Text="{Binding SelectedPost.IsLiked, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=❤️ 已点赞|🤍 点赞}"/>
-                                    </TextBlock>
+                                        Classes="Outline" FontSize="12" Padding="12,6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="{Binding SelectedPost.IsLiked, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=❤|♡}" FontSize="14"/>
+                                        <TextBlock Text="{Binding SelectedPost.IsLiked, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=已点赞|点赞}" FontSize="12" Foreground="{DynamicResource SemiColor}"/>
+                                    </StackPanel>
                                 </Button>
                                 <Button Command="{Binding ToggleFavoriteCommand}"
                                         CommandParameter="{Binding SelectedPost}"
-                                        Classes="Hyperlink" FontSize="12" Padding="6,3">
-                                    <TextBlock>
-                                        <Run Text="{Binding SelectedPost.IsFavorited, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=★ 已收藏|☆ 收藏}"/>
-                                    </TextBlock>
+                                        Classes="Outline" FontSize="12" Padding="12,6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="{Binding SelectedPost.IsFavorited, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=★|☆}" FontSize="14"/>
+                                        <TextBlock Text="{Binding SelectedPost.IsFavorited, Converter={x:Static local:BoolRunConverter.Instance}, ConverterParameter=已收藏|收藏}" FontSize="12" Foreground="{DynamicResource SemiColor}"/>
+                                    </StackPanel>
                                 </Button>
                                 <Button Command="{Binding DeletePostCommand}"
                                         CommandParameter="{Binding SelectedPost}"
-                                        Classes="Danger" FontSize="12" Padding="6,3" Content="删除"/>
+                                        Classes="Danger" FontSize="12" Padding="12,6" Content="删除"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
                     <!-- 评论区域 -->
                     <Border Background="{DynamicResource RegionColor}"
-                            CornerRadius="8" Padding="16,12"
-                            BorderBrush="{DynamicResource SemiBorderColor}" BorderThickness="1">
-                        <StackPanel Spacing="10">
-                            <TextBlock Text="评论" FontSize="15" FontWeight="SemiBold"/>
+                            CornerRadius="10" Padding="18,14"
+                            BorderBrush="{DynamicResource SemiColor6}" BorderThickness="1">
+                        <StackPanel Spacing="12">
+                            <!-- 标题栏 -->
+                            <Grid ColumnDefinitions="Auto,*">
+                                <TextBlock Grid.Column="0" Text="💬 评论" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource SemiColor}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Comments.Count, StringFormat='共 {0} 条'}" FontSize="12" Opacity="0.5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            </Grid>
 
                             <!-- 评论列表 -->
-                            <ScrollViewer MaxHeight="280" VerticalScrollBarVisibility="Auto"
+                            <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto"
                                           IsVisible="{Binding Comments.Count, Converter={x:Static local:IntGreaterThanZeroConverter.Instance}}">
                                 <ItemsControl ItemsSource="{Binding Comments}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate DataType="m:CommentModel">
-                                            <Border Background="{DynamicResource SemiFillColor}"
-                                                    CornerRadius="6" Padding="10,8" Margin="0,3">
+                                            <Border Background="{DynamicResource SemiColor8}"
+                                                    CornerRadius="8" Padding="12,10" Margin="0,4">
                                                 <Grid ColumnDefinitions="*,Auto">
                                                     <StackPanel>
-                                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
                                                             <TextBlock Text="{Binding UserName}" FontSize="12"
-                                                                       FontWeight="SemiBold"/>
+                                                                       FontWeight="SemiBold" Foreground="{DynamicResource SemiColor}"/>
                                                             <TextBlock Text="{Binding FormattedTime}" FontSize="11"
-                                                                       Opacity="0.45"/>
+                                                                       Opacity="0.5" Foreground="{DynamicResource SemiColor}"/>
                                                         </StackPanel>
                                                         <TextBlock Text="{Binding Content}" FontSize="13"
-                                                                   TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                                   TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource SemiColor}"/>
                                                     </StackPanel>
                                                     <Button Grid.Column="1"
                                                             Command="{Binding $parent[ItemsControl].DataContext.DeleteCommentCommand}"
                                                             CommandParameter="{Binding}"
-                                                            Content="×" Classes="Hyperlink" FontSize="14"/>
+                                                            Content="🗑️" Classes="Hyperlink" FontSize="12"
+                                                            ToolTip.Tip="删除评论" VerticalAlignment="Top"/>
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
@@ -241,18 +268,21 @@
                             </ScrollViewer>
 
                             <!-- 无评论提示 -->
-                            <TextBlock Text="暂无评论，来发表第一条吧~"
-                                       IsVisible="{Binding !Comments.Count, Converter={x:Static local:BoolInvertConverter.Instance}}"
-                                       Opacity="0.4" FontSize="12" HorizontalAlignment="Center"/>
+                            <Border Background="{DynamicResource SemiColor8}" CornerRadius="8" Padding="16,12"
+                                    IsVisible="{Binding !Comments.Count, Converter={x:Static local:BoolInvertConverter.Instance}}">
+                                <TextBlock Text="暂无评论，来发表第一条吧~"
+                                           Opacity="0.5" FontSize="13" HorizontalAlignment="Center" Foreground="{DynamicResource SemiColor}"/>
+                            </Border>
 
                             <!-- 发表评论输入框 -->
-                            <DockPanel Margin="0,6,0,0">
-                                <TextBox DockPanel.Dock="Right" Text="{Binding NewCommentContent}"
-                                         Watermark="写评论..." Width="260" Height="36" FontSize="13"/>
-                                <Button DockPanel.Dock="Right" Content="发送"
+                            <DockPanel Margin="0,4,0,0">
+                                <Button DockPanel.Dock="Right" Content="发送 ➤"
                                         Command="{Binding SubmitCommentCommand}"
-                                        Classes="Primary" Padding="14,7" FontSize="12"
-                                        Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                        Classes="Primary" Padding="14,8" FontSize="12"
+                                        Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                <TextBox DockPanel.Dock="Right" Text="{Binding NewCommentContent}"
+                                         Watermark="写下你的评论..." Height="40" FontSize="13"
+                                         VerticalContentAlignment="Center"/>
                             </DockPanel>
                         </StackPanel>
                     </Border>
@@ -262,31 +292,41 @@
             <!-- 发帖模式 -->
             <ScrollViewer x:Name="CreateScroll" VerticalScrollBarVisibility="Auto"
                           IsVisible="{Binding IsCreatingPost}">
-                <StackPanel Margin="24,16" Spacing="14">
-                    <TextBlock Text="发布新帖" FontSize="18" FontWeight="Bold"/>
+                <StackPanel Margin="24,16" Spacing="16">
+                    <!-- 返回按钮 -->
+                    <Button Content="← 返回列表" Command="{Binding CancelCreatePostCommand}"
+                            Classes="Outline" Padding="10,5" FontSize="12"
+                            HorizontalAlignment="Left"/>
+
+                    <!-- 页面标题 -->
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,4,0,0">
+                        <TextBlock Text="✏️" FontSize="20"/>
+                        <TextBlock Text="发布新帖" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource SemiColor}"/>
+                    </StackPanel>
 
                     <Border Background="{DynamicResource RegionColor}"
-                            CornerRadius="8" Padding="20,16"
-                            BorderBrush="{DynamicResource SemiBorderColor}" BorderThickness="1">
-                        <StackPanel Spacing="12">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="标题" FontSize="12" Opacity="0.6"/>
-                                <TextBox Text="{Binding NewPostTitle}" Watermark="请输入标题..."
-                                         Height="40" FontSize="14"/>
+                            CornerRadius="10" Padding="22,18"
+                            BorderBrush="{DynamicResource SemiColor6}" BorderThickness="1">
+                        <StackPanel Spacing="14">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="📌 标题" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource SemiColor}"/>
+                                <TextBox Text="{Binding NewPostTitle}" Watermark="请输入帖子标题..."
+                                         Height="44" FontSize="14" 
+                                         VerticalContentAlignment="Center"/>
                             </StackPanel>
 
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="内容" FontSize="12" Opacity="0.6"/>
-                                <TextBox Text="{Binding NewPostContent}" Watermark="请输入正文..."
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="📝 正文内容" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource SemiColor}"/>
+                                <TextBox Text="{Binding NewPostContent}" Watermark="请输入帖子内容..."
                                          AcceptsReturn="True" TextWrapping="Wrap"
-                                         MinHeight="150" MaxHeight="300" FontSize="14"/>
+                                         MinHeight="160" MaxHeight="320" FontSize="14"/>
                             </StackPanel>
 
-                            <Grid ColumnDefinitions="Auto,Auto" Margin="0,8,0,0">
-                                <Button Grid.Column="0" Content="发布" Command="{Binding SubmitCreatePostCommand}"
-                                        Classes="Primary" Padding="20,8" FontSize="13" Margin="0,0,10,0"/>
+                            <Grid ColumnDefinitions="Auto,Auto" Margin="0,10,0,0">
+                                <Button Grid.Column="0" Content="立即发布 ➤" Command="{Binding SubmitCreatePostCommand}"
+                                        Classes="Primary" Padding="18,10" FontSize="13" Margin="0,0,12,0"/>
                                 <Button Grid.Column="1" Content="取消" Command="{Binding CancelCreatePostCommand}"
-                                        Classes="Outline" Padding="20,8" FontSize="13"/>
+                                        Classes="Outline" Padding="18,10" FontSize="13"/>
                             </Grid>
                         </StackPanel>
                     </Border>
