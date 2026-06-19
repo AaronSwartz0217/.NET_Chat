@@ -15,7 +15,7 @@
             <!-- 顶部状态栏 -->
             <Border Grid.Row="0"
                     Height="50"
-                    Background="{DynamicResource SemiPurple2Color}"
+                    Background="#00A6FF"
                     CornerRadius="8,8,0,0">
                 <DockPanel Margin="16,0" VerticalAlignment="Center">
                     <!-- 左侧：用户信息 -->
@@ -25,17 +25,19 @@
                                 Margin="0,0,10,0">
                         <PathIcon Width="20"
                                   Data="{DynamicResource SemiIconUser}"
-                                  Foreground="{DynamicResource SemiPurpleColor}"
+                                  Foreground="White"
                                   Margin="0,0,10,0" />
                         <TextBlock Text="{Binding CurrentUserName}"
                                    FontSize="15"
                                    FontWeight="SemiBold"
-                                   VerticalAlignment="Center" />
+                                   VerticalAlignment="Center"
+                                   Foreground="White" />
                         <TextBlock Text="(you)"
                                    FontSize="11"
-                                   Opacity="0.5"
+                                   Opacity="0.8"
                                    VerticalAlignment="Center"
-                                   Margin="4,0,0,0" />
+                                   Margin="4,0,0,0"
+                                   Foreground="White" />
                     </StackPanel>
 
                     <!-- 中间：连接状态 + 聊天模式 -->
@@ -51,41 +53,36 @@
                                      FallbackValue={DynamicResource SemiDangerColor}}" />
                         <TextBlock Text="{Binding StatusText}"
                                    FontSize="12"
-                                   Opacity="0.8"
+                                   Opacity="0.9"
                                    VerticalAlignment="Center"
-                                   Margin="8,0,0,0" />
+                                   Margin="8,0,0,0"
+                                   Foreground="White" />
 
                         <!-- 私聊模式时显示返回群聊按钮 -->
-                        <Button Content="&lt;- Group"
+                        <Button Content="&lt;- 返回群聊"
                                 Command="{Binding SwitchToGroupChatCommand}"
                                 IsVisible="{Binding IsPrivateChat}"
                                 Classes="Hyperlink"
                                 FontSize="12"
-                                Margin="12,0,0,0" />
+                                Margin="12,0,0,0"
+                                Foreground="White" />
                     </StackPanel>
 
-                    <!-- 右侧：在线人数 + 退出登录 -->
+                    <!-- 右侧：在线人数 -->
                     <StackPanel DockPanel.Dock="Right"
                                 Orientation="Horizontal"
                                 VerticalAlignment="Center"
-                                Opacity="0.7"
+                                Opacity="0.9"
                                 Margin="0,0,0,0">
                         <!-- 在线人数 -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
-                            <PathIcon Width="14" Data="{DynamicResource SemiIconPeopleGroup}" Margin="0,0,6,0" />
-                            <TextBlock FontSize="12">
-                                <Run Text="Online " />
+                            <PathIcon Width="14" Data="{DynamicResource SemiIconPeopleGroup}" Margin="0,0,6,0" Foreground="White" />
+                            <TextBlock FontSize="12" Foreground="White">
+                                <Run Text="在线 " />
                                 <Run Text="{Binding OnlineUsers.Count}" FontWeight="Bold" />
-                                <Run Text=" ppl" />
+                                <Run Text="人" />
                             </TextBlock>
                         </StackPanel>
-
-                        <!-- 退出登录按钮 -->
-                        <Button Content="Logout"
-                                Command="{Binding LogoutCommand}"
-                                Classes="Hyperlink"
-                                FontSize="12"
-                                Foreground="{DynamicResource SemiDangerColor}" />
                     </StackPanel>
                 </DockPanel>
             </Border>

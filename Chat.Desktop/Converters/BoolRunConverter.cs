@@ -23,6 +23,13 @@ public class BoolRunConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        var param = parameter as string ?? "";
+        var parts = param.Split('|');
+        if (parts.Length >= 2)
+        {
+            var trueValue = parts[0];
+            return Equals(value, trueValue);
+        }
+        return false;
     }
 }

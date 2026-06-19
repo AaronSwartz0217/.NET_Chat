@@ -39,6 +39,7 @@ public partial class ForumViewModel : ViewModelBase
     /// 当前是否在查看帖子详情
     /// </summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsListVisible))]
     private bool _isViewingDetail = false;
 
     // ===== 评论相关 =====
@@ -73,7 +74,13 @@ public partial class ForumViewModel : ViewModelBase
     private string? _newPostContent = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsListVisible))]
     private bool _isCreatingPost = false;
+
+    /// <summary>
+    /// 帖子列表是否可见（非详情页且非发帖页）
+    /// </summary>
+    public bool IsListVisible => !IsViewingDetail && !IsCreatingPost;
 
     // ===== 分页 =====
 
