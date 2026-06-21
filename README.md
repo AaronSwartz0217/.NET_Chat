@@ -14,9 +14,9 @@
 
 ---
 
-## ⚠️ 项目状态：后端完成版 (Backend Complete)
+## ⚠️ 项目状态：前端开发完成版 (Frontend Complete)
 
-> **声明：本项目后端服务已完成并通过测试，前端客户端正在开发中。**
+> **声明：本项目后端服务和前端客户端均已完成并通过测试！**
 
 | 模块 | 状态 | 说明 |
 |------|------|------|
@@ -24,8 +24,8 @@
 | **WebSocket** | ✅ 完成 | 实时聊天、在线状态、消息广播 |
 | **认证授权** | ✅ 完成 | JWT Bearer Token 认证 |
 | **数据库** | ✅ 完成 | MySQL + SqlSugar ORM |
-| **Android 前端** | 🔧 开发中 | Kotlin/Java |
-| **Desktop 前端** | 🔧 开发中 | Avalonia/C# |
+| **Android 前端** | ✅ 开发成功 | [NTU_DigitalTwin](https://github.com/AaronSwartz0217/NTU_DigitalTwin) |
+| **Desktop 前端** | ✅ 开发成功 | Avalonia/C# |
 | **Web 前端** | 📋 规划中 | - |
 
 ---
@@ -207,7 +207,7 @@ dotnet run
 
 ## 开发计划
 
-### 当前版本 v1.0.0-beta（后端完成）
+### 当前版本 v1.0.0（前端开发完成）
 
 - [x] REST API 完整实现
 - [x] WebSocket 实时通信
@@ -215,15 +215,15 @@ dotnet run
 - [x] 消息持久化
 - [x] 在线状态管理
 - [x] 断线重连机制
+- [x] Android 前端客户端 ✅
+- [x] Desktop 前端客户端 ✅
 
 ### 下一步计划
 
-- [ ] 前端 Android 客户端完善
-- [ ] 前端 Desktop 客户端完善
+- [ ] Web 前端开发
 - [ ] 图片/文件传输支持
 - [ ] 消息撤回功能
 - [ ] 群组高级管理
-- [ ] Web 前端开发
 
 ---
 
