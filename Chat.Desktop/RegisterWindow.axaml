@@ -1,0 +1,162 @@
+<u:UrsaWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Chat.Desktop.ViewModels"
+        xmlns:local="using:Chat.Desktop"
+        xmlns:u="https://irihi.tech/ursa"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="580"
+        x:Class="Chat.Desktop.RegisterWindow"
+        x:DataType="vm:RegisterWindowViewModel"
+        Width="450"
+        Height="580"
+        Title="用户注册 - Chat_v"
+        CanResize="False">
+
+    <Design.DataContext>
+        <vm:RegisterWindowViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- 顶部标题栏 -->
+        <Panel Grid.Row="0"
+               Height="90"
+               Background="#00A6FF">
+            <TextBlock Theme="{StaticResource TitleTextBlock}"
+                       Classes="H2"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Text="创建新账号" />
+            <TextBlock VerticalAlignment="Bottom"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,12"
+                       FontSize="12"
+                       Opacity="0.8"
+                       Text="加入天涯世界，开启聊天之旅" />
+        </Panel>
+
+        <!-- 中间表单区域 -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Margin="0,24,0,0"
+                        Spacing="14">
+
+                <!-- 用户名 -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="用户名 *" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource TextColor}"/>
+                    <TextBox PlaceholderText="请输入用户名（至少3个字符）"
+                             MaxLength="30"
+                             Text="{Binding UserName}"
+                             IsEnabled="{Binding !IsLoading}">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Width="14" Data="{DynamicResource SemiIconUser}" />
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+                </StackPanel>
+
+                <!-- 昵称 -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="昵称" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource TextColor}"/>
+                    <TextBox PlaceholderText="请输入昵称（可选）"
+                             MaxLength="50"
+                             Text="{Binding NickName}"
+                             IsEnabled="{Binding !IsLoading}">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Width="14" Data="{DynamicResource SemiIconUserCircle}" />
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+                </StackPanel>
+
+                <!-- 密码 -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="密码 *" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource TextColor}"/>
+                    <TextBox Classes="RevealPasswordButton"
+                             PlaceholderText="请输入密码（至少6个字符）"
+                             Text="{Binding Password}"
+                             IsEnabled="{Binding !IsLoading}">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Width="14" Data="{DynamicResource SemiIconLock}" />
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+                </StackPanel>
+
+                <!-- 确认密码 -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="确认密码 *" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource TextColor}"/>
+                    <TextBox Classes="RevealPasswordButton"
+                             PlaceholderText="请再次输入密码"
+                             Text="{Binding ConfirmPassword}"
+                             IsEnabled="{Binding !IsLoading}">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Width="14" Data="{DynamicResource SemiIconTick}" />
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+                </StackPanel>
+
+                <!-- 邮箱 -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="邮箱" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource TextColor}"/>
+                    <TextBox PlaceholderText="请输入邮箱（可选）"
+                             MaxLength="100"
+                             Text="{Binding Email}"
+                             IsEnabled="{Binding !IsLoading}">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Width="14" Data="{DynamicResource SemiIconMail}" />
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+                </StackPanel>
+
+                <!-- 状态消息 -->
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           Height="36"
+                           Foreground="{Binding IsSuccess, Converter={x:Static local:StatusColorConverter.Instance}}" />
+
+                <!-- 注册按钮 -->
+                <u:IconButton Classes="Primary"
+                              Icon="{StaticResource SemiIconUserAdd}"
+                              Theme="{DynamicResource SolidIconButton}"
+                              CornerRadius="22"
+                              Content="注 册"
+                              Command="{Binding OkClickCommand}"
+                              IsEnabled="{Binding !IsLoading}" />
+
+                <!-- 取消按钮 -->
+                <u:IconButton Classes="Tertiary"
+                              Icon="{StaticResource SemiIconClose}"
+                              CornerRadius="22"
+                              Content="取 消"
+                              Command="{Binding CancelClickCommand}"
+                              IsEnabled="{Binding !IsLoading}" />
+
+                <!-- 返回登录链接 -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="8">
+                    <TextBlock Text="已有账号？" FontSize="12" Opacity="0.6" />
+                    <HyperlinkButton Content="立即登录"
+                                     FontSize="12"
+                                     Command="{Binding CancelClickCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- 底部加载指示器 -->
+        <StackPanel Grid.Row="2"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,20"
+                    Spacing="4">
+            <ProgressBar IsIndeterminate="True"
+                         IsVisible="{Binding IsLoading}"
+                         Width="200"
+                         Height="3" />
+            <TextBlock Text=".NET 9.0 + Avalonia + Furion"
+                       FontSize="11"
+                       Opacity="0.4"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</u:UrsaWindow>

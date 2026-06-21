@@ -1,0 +1,95 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Chat.Desktop"
+             xmlns:vm="using:Chat.Desktop.ViewModels"
+             xmlns:models="using:Chat.Desktop.Models"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="Chat.Desktop.Views.SearchView"
+             x:DataType="vm:SearchViewModel">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- 搜索工具栏 -->
+        <Border Grid.Row="0" Padding="16" Background="{DynamicResource CardColor}" 
+                BorderBrush="{DynamicResource BorderColor}" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <!-- 搜索类型切换 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <Button Content="帖子" Command="{Binding SwitchTypeCommand}" CommandParameter="posts"
+                            Padding="12,6" CornerRadius="6" Background="#00A6FF" Foreground="White"/>
+                    <Button Content="用户" Command="{Binding SwitchTypeCommand}" CommandParameter="users"
+                            Padding="12,6" CornerRadius="6" Background="Gray" Foreground="White"/>
+                </StackPanel>
+
+                <!-- 搜索框 -->
+                <TextBox Grid.Column="1" PlaceholderText="输入关键词搜索..." Text="{Binding SearchQuery}"
+                         Margin="16,0" FontSize="14" Height="36"/>
+
+                <!-- 搜索和清除按钮 -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                    <Button Content="搜索" Command="{Binding SearchCommand}" Padding="16,6" CornerRadius="6" Background="#00A6FF" Foreground="White"/>
+                    <Button Content="清除" Command="{Binding ClearSearchCommand}" Padding="12,6" CornerRadius="6" IsVisible="{Binding HasSearched}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 搜索结果区域 -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16" Margin="16">
+                <!-- 加载中 -->
+                <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsLoading}" Height="3"/>
+
+                <!-- 状态消息 -->
+                <TextBlock Text="{Binding StatusMessage}" FontSize="14" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource TextColor}" Opacity="0.7"/>
+
+                <!-- 未搜索状态 -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="0,60,0,0"
+                           IsVisible="{Binding !HasSearched}">
+                    <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="48"
+                               HorizontalAlignment="Center" Opacity="0.3" Foreground="{DynamicResource TextColor}"/>
+                    <TextBlock Text="输入关键词开始搜索" FontSize="16" Opacity="0.5"
+                               HorizontalAlignment="Center" Foreground="{DynamicResource TextColor}"/>
+                </StackPanel>
+
+                <!-- 无结果状态 -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="0,60,0,0"
+                           IsVisible="{Binding HasNoResults}">
+                    <TextBlock Text="&#xE71E;" FontFamily="Segoe MDL2 Assets" FontSize="48"
+                               HorizontalAlignment="Center" Opacity="0.3" Foreground="{DynamicResource TextColor}"/>
+                    <TextBlock Text="未找到相关结果" FontSize="16" Opacity="0.5"
+                               HorizontalAlignment="Center" Foreground="{DynamicResource TextColor}"/>
+                </StackPanel>
+
+                <!-- 搜索结果列表 -->
+                <ItemsControl ItemsSource="{Binding SearchResults}" IsVisible="{Binding HasResults}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:PostModel">
+                            <Border Background="{DynamicResource CardColor}" BorderBrush="{DynamicResource BorderColor}"
+                                    BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextColor}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding Content}" FontSize="13" Foreground="{DynamicResource TextColor}"
+                                               Opacity="0.7" MaxLines="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="16">
+                                        <TextBlock Text="{Binding UserName}" FontSize="12" Opacity="0.6"
+                                                   Foreground="{DynamicResource TextColor}"/>
+                                        <TextBlock Text="{Binding CommentCount}" FontSize="12" Opacity="0.6"
+                                                   Foreground="{DynamicResource TextColor}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- 加载更多按钮 -->
+                <Button Content="加载更多" Command="{Binding LoadMoreCommand}"
+                        HorizontalAlignment="Center" Padding="24,10" CornerRadius="8"
+                        IsVisible="{Binding HasMoreResults}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

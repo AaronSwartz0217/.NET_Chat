@@ -165,7 +165,32 @@ public partial class LoginWindowViewModel : ViewModelBase, IDialogContext
     [RelayCommand]
     private async Task RegisterClick()
     {
-        // TODO: 注册功能待实现
+        // 打开注册窗口
+        var registerVm = new RegisterWindowViewModel();
+        var registerWindow = new RegisterWindow { DataContext = registerVm };
+
+        registerVm.RequestClose += (sender, result) =>
+        {
+            registerWindow.Close();
+        };
+
+        // 显示模态注册窗口（需要传入父窗口）
+        if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var mainWindow = desktop.MainWindow;
+            if (mainWindow != null)
+            {
+                await registerWindow.ShowDialog(mainWindow);
+            }
+            else
+            {
+                registerWindow.Show();
+            }
+        }
+        else
+        {
+            registerWindow.Show();
+        }
     }
 
     public event EventHandler<object?>? RequestClose;

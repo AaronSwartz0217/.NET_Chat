@@ -12,6 +12,16 @@ namespace Chat.Desktop.ViewModels;
 public partial class MainViewModel : ViewModelBase
 {
     /// <summary>
+    /// 搜索视图ViewModel
+    /// </summary>
+    public SearchViewModel SearchVM { get; }
+
+    /// <summary>
+    /// 通知视图ViewModel
+    /// </summary>
+    public NotificationViewModel NotificationVM { get; }
+
+    /// <summary>
     /// 聊天室ViewModel
     /// </summary>
     public ChatViewModel ChatVM { get; }
@@ -39,6 +49,8 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
+        SearchVM = new SearchViewModel();
+        NotificationVM = new NotificationViewModel();
         ChatVM = new ChatViewModel();
         ForumVM = new ForumViewModel();
         ProfileVM = new ProfileViewModel();
@@ -46,27 +58,34 @@ public partial class MainViewModel : ViewModelBase
         // 订阅聊天室的退出登录事件
         ChatVM.OnLogoutRequested += () => RequestLogout();
 
-        // 默认显示聊天室
-        SelectedTabIndex = 1;
+        // 默认显示搜索
+        SelectedTabIndex = 0;
     }
 
     /// <summary>
-    /// 当前选中的Tab索引 (0=我的, 1=聊天室, 2=论坛)
+    /// 当前选中的Tab索引 (0=搜索, 1=通知, 2=我的, 3=聊天室, 4=论坛)
     /// </summary>
     [ObservableProperty]
-    private int _selectedTabIndex = 1;
+    private int _selectedTabIndex = 0;
 
     partial void OnSelectedTabIndexChanged(int value)
     {
         switch (value)
         {
             case 0:
+                // 搜索页面 - 不需要额外加载
+                break;
+            case 1:
+                // 通知页面 - 加载通知
+                _ = NotificationVM.LoadNotificationsAsync();
+                break;
+            case 2:
                 if (!ProfileVM.HasProfile)
                     _ = ProfileVM.LoadProfileAsync();
                 break;
-            case 1:
+            case 3:
                 break;
-            case 2:
+            case 4:
                 _ = ForumVM.LoadPostsAsync();
                 break;
         }
@@ -77,11 +96,15 @@ public partial class MainViewModel : ViewModelBase
     /// </summary>
     public void SetToken(string token, int userId, string userName)
     {
+        SearchVM.SetToken(token);
+        NotificationVM.SetToken(token);
         ChatVM.SetToken(token);
         ForumVM.SetToken(token);
-        ForumVM.CurrentUserId = userId;
         ProfileVM.SetToken(token);
         CurrentUserName = userName;
+
+        // 加载通知
+        _ = NotificationVM.LoadNotificationsAsync();
     }
 
     /// <summary>
@@ -103,13 +126,19 @@ public partial class MainViewModel : ViewModelBase
     // ===== 导航命令 =====
 
     [RelayCommand]
-    private void SwitchToProfile() => SelectedTabIndex = 0;
+    private void SwitchToSearch() => SelectedTabIndex = 0;
 
     [RelayCommand]
-    private void SwitchToChat() => SelectedTabIndex = 1;
+    private void SwitchToNotification() => SelectedTabIndex = 1;
 
     [RelayCommand]
-    private void SwitchToForum() => SelectedTabIndex = 2;
+    private void SwitchToProfile() => SelectedTabIndex = 2;
+
+    [RelayCommand]
+    private void SwitchToChat() => SelectedTabIndex = 3;
+
+    [RelayCommand]
+    private void SwitchToForum() => SelectedTabIndex = 4;
 
     [RelayCommand]
     private void ToggleTheme()

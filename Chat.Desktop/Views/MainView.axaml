@@ -11,35 +11,47 @@
     <Grid RowDefinitions="Auto,*">
         <!-- 顶部导航栏 - 天蓝色风格 -->
         <Border Grid.Row="0" Height="48" Background="#00A6FF" BorderThickness="0,0,0,1">
-            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
                 <!-- 标题 -->
                 <TextBlock Grid.Column="0" Text="天涯世界" FontSize="18" FontWeight="Bold"
                            VerticalAlignment="Center" Margin="16,0,8,0" Foreground="White"/>
 
-                <!-- 三个导航按钮（水平排列） -->
-                <Button Grid.Column="1" Content="我的" Command="{Binding SwitchToProfileCommand}"
+                <!-- 五个导航按钮（水平排列） -->
+                <Button Grid.Column="1" Content="搜索" Command="{Binding SwitchToSearchCommand}"
                         VerticalAlignment="Center" Margin="4,0"
                         Background="{Binding SelectedTabIndex, Converter={x:Static local:TabBgConverter.Instance}, ConverterParameter=0}"
                         Padding="12,6" FontSize="14" Foreground="White"
                         BorderThickness="0"/>
 
-                <Button Grid.Column="2" Content="聊天室" Command="{Binding SwitchToChatCommand}"
+                <Button Grid.Column="2" Content="通知" Command="{Binding SwitchToNotificationCommand}"
                         VerticalAlignment="Center" Margin="4,0"
                         Background="{Binding SelectedTabIndex, Converter={x:Static local:TabBgConverter.Instance}, ConverterParameter=1}"
                         Padding="12,6" FontSize="14" Foreground="White"
                         BorderThickness="0"/>
 
-                <Button Grid.Column="3" Content="论坛" Command="{Binding SwitchToForumCommand}"
+                <Button Grid.Column="3" Content="我的" Command="{Binding SwitchToProfileCommand}"
                         VerticalAlignment="Center" Margin="4,0"
                         Background="{Binding SelectedTabIndex, Converter={x:Static local:TabBgConverter.Instance}, ConverterParameter=2}"
                         Padding="12,6" FontSize="14" Foreground="White"
                         BorderThickness="0"/>
 
+                <Button Grid.Column="4" Content="聊天室" Command="{Binding SwitchToChatCommand}"
+                        VerticalAlignment="Center" Margin="4,0"
+                        Background="{Binding SelectedTabIndex, Converter={x:Static local:TabBgConverter.Instance}, ConverterParameter=3}"
+                        Padding="12,6" FontSize="14" Foreground="White"
+                        BorderThickness="0"/>
+
+                <Button Grid.Column="5" Content="论坛" Command="{Binding SwitchToForumCommand}"
+                        VerticalAlignment="Center" Margin="4,0"
+                        Background="{Binding SelectedTabIndex, Converter={x:Static local:TabBgConverter.Instance}, ConverterParameter=4}"
+                        Padding="12,6" FontSize="14" Foreground="White"
+                        BorderThickness="0"/>
+
                 <!-- 弹性空白 -->
-                <Rectangle Grid.Column="4" />
+                <Rectangle Grid.Column="6" />
 
                 <!-- 退出登录 -->
-                <Button Grid.Column="5" Content="退出登录" Command="{Binding DoLogoutCommand}"
+                <Button Grid.Column="7" Content="退出登录" Command="{Binding DoLogoutCommand}"
                         Classes="Hyperlink" FontSize="12" Margin="0,0,16,0"
                         VerticalAlignment="Center" Foreground="White" Background="Transparent"
                         BorderThickness="0"/>
@@ -51,6 +63,8 @@
             <ContentControl.Content>
                 <MultiBinding Converter="{x:Static local:TabContentConverter.Instance}">
                     <Binding Path="SelectedTabIndex"/>
+                    <Binding Path="SearchVM"/>
+                    <Binding Path="NotificationVM"/>
                     <Binding Path="ProfileVM"/>
                     <Binding Path="ChatVM"/>
                     <Binding Path="ForumVM"/>

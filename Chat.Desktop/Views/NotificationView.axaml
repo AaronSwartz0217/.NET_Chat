@@ -1,0 +1,97 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Chat.Desktop"
+             xmlns:vm="using:Chat.Desktop.ViewModels"
+             xmlns:services="using:Chat.Desktop.Services"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="Chat.Desktop.Views.NotificationView"
+             x:DataType="vm:NotificationViewModel">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- 顶部工具栏 -->
+        <Border Grid.Row="0" Padding="16" Background="{DynamicResource CardColor}" 
+                BorderBrush="{DynamicResource BorderColor}" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <!-- 标题 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="&#xE7E3;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                               VerticalAlignment="Center" Foreground="#00A6FF"/>
+                    <TextBlock Text="通知中心" FontSize="18" FontWeight="SemiBold"
+                               VerticalAlignment="Center" Foreground="{DynamicResource TextColor}"/>
+                    <!-- 未读数量徽章 -->
+                    <Border Background="#EF4444" CornerRadius="10" Padding="8,2"
+                            IsVisible="{Binding UnreadCount, Converter={x:Static local:CountVisibilityConverter.Instance}}">
+                        <TextBlock Text="{Binding UnreadCount}" FontSize="12" Foreground="White"
+                                   FontWeight="Bold" HorizontalAlignment="Center"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- 右侧操作按钮 -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                    <Button Content="全部已读" Command="{Binding MarkAllAsReadCommand}"
+                            Padding="12,6" CornerRadius="6"/>
+                    <Button Content="刷新" Command="{Binding RefreshCommand}"
+                            Padding="12,6" CornerRadius="6" Background="#00A6FF" Foreground="White"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 通知列表 -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="12" Margin="16">
+                <!-- 加载中 -->
+                <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsLoading}" Height="3"/>
+
+                <!-- 状态消息 -->
+                <TextBlock Text="{Binding StatusMessage}" FontSize="14" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource TextColor}" Opacity="0.7" Margin="0,20,0,0"/>
+
+                <!-- 空状态 -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="0,60,0,0"
+                           IsVisible="{Binding !HasNotifications}">
+                    <TextBlock Text="&#xE7F4;" FontFamily="Segoe MDL2 Assets" FontSize="48"
+                               HorizontalAlignment="Center" Opacity="0.3" Foreground="{DynamicResource TextColor}"/>
+                    <TextBlock Text="暂无通知" FontSize="16" Opacity="0.5"
+                               HorizontalAlignment="Center" Foreground="{DynamicResource TextColor}"/>
+                </StackPanel>
+
+                <!-- 通知列表 -->
+                <ItemsControl ItemsSource="{Binding Notifications}" IsVisible="{Binding HasNotifications}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="services:NotificationModel">
+                            <Border Background="{DynamicResource CardColor}" BorderBrush="{DynamicResource BorderColor}"
+                                    BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,8">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <!-- 图标 -->
+                                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" 
+                                            Background="#00A6FF" Margin="0,0,12,0">
+                                        <TextBlock Text="&#xE7E3;" FontFamily="Segoe MDL2 Assets" FontSize="18"
+                                                   Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- 内容 -->
+                                    <StackPanel Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextColor}"/>
+                                        <TextBlock Text="{Binding Content}" FontSize="12"
+                                                   Foreground="{DynamicResource TextColor}" Opacity="0.7"
+                                                   TextTrimming="CharacterEllipsis" MaxLines="2"/>
+                                        <TextBlock Text="{Binding CreatedAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                                                   FontSize="11" Foreground="{DynamicResource TextColor}" Opacity="0.5"/>
+                                    </StackPanel>
+
+                                    <!-- 未读指示器 -->
+                                    <Ellipse Grid.Column="2" Width="8" Height="8" Fill="#EF4444"
+                                             VerticalAlignment="Top" Margin="8,4,0,0"
+                                             IsVisible="{Binding !IsRead}"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
