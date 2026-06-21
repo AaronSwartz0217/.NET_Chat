@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Chat.Desktop.Models;
 
@@ -15,6 +16,16 @@ public class SearchApiService
 {
     private readonly HttpClient _httpClient;
     private string? _accessToken;
+
+    /// <summary>
+    /// JSON序列化选项 - 匹配Furion后端API格式
+    /// </summary>
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = false
+    };
 
     public SearchApiService()
     {
@@ -55,10 +66,71 @@ public class SearchApiService
             var json = await response.Content.ReadAsStringAsync();
             System.Diagnostics.Debug.WriteLine($"[Search] 响应: {json.Substring(0, Math.Min(500, json.Length))}");
 
-            var result = JsonSerializer.Deserialize<SearchResult>(json, new JsonSerializerOptions
+            // 解析Furion RESTfulResult - 数据在data字段中
+            using var doc = JsonDocument.Parse(json);
+            
+            var result = new SearchResult();
+            
+            if (doc.RootElement.TryGetProperty("data", out var dataEl))
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
+                // 解析帖子列表
+                if (dataEl.TryGetProperty("posts", out var postsEl) && postsEl.ValueKind == JsonValueKind.Array)
+                {
+                    result.Posts = new List<PostModel>();
+                    foreach (var item in postsEl.EnumerateArray())
+                    {
+                        try
+                        {
+                            var post = JsonSerializer.Deserialize<PostModel>(item.GetRawText(), _jsonOptions);
+                            if (post != null)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"[Search] 解析帖子: Id={post.Id}, Title={post.Title}");
+                                result.Posts.Add(post);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[Search] 解析帖子失败: {ex.Message}");
+                        }
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("[Search] posts字段不存在或不是数组");
+                }
+                
+                // 解析用户列表
+                if (dataEl.TryGetProperty("users", out var usersEl) && usersEl.ValueKind == JsonValueKind.Array)
+                {
+                    result.Users = new List<UserModel>();
+                    foreach (var item in usersEl.EnumerateArray())
+                    {
+                        try
+                        {
+                            var user = JsonSerializer.Deserialize<UserModel>(item.GetRawText(), _jsonOptions);
+                            if (user != null)
+                                result.Users.Add(user);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[Search] 解析用户失败: {ex.Message}");
+                        }
+                    }
+                }
+                
+                // 解析总数
+                if (dataEl.TryGetProperty("totalCount", out var totalEl))
+                    result.TotalCount = totalEl.GetInt32();
+                    
+                if (dataEl.TryGetProperty("totalPages", out var pagesEl))
+                    result.TotalPages = pagesEl.GetInt32();
+
+                System.Diagnostics.Debug.WriteLine($"[Search] 解析结果: Posts={result.Posts?.Count}, Users={result.Users?.Count}, Total={result.TotalCount}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("[Search] data字段不存在!");
+            }
 
             return result;
         }
