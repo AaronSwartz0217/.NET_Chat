@@ -90,16 +90,17 @@
             <!-- 主体区域：左侧用户列表 + 右侧消息区 -->
             <Grid Grid.Row="1" ColumnDefinitions="180,*">
                 <!-- 左侧：在线用户列表 -->
-                <Border BorderBrush="{DynamicResource SemiBorderColor}"
+                <Border BorderBrush="{DynamicResource BorderColor}"
                       BorderThickness="0,0,1,0"
-                      Background="{DynamicResource RegionColor}">
+                      Background="{DynamicResource CardColor}">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top"
                                    Text="Online Users"
                                    FontSize="13"
                                    FontWeight="SemiBold"
                                    Margin="12,10"
-                                   Opacity="0.7" />
+                                   Opacity="0.7"
+                                   Foreground="{DynamicResource TextColor}" />
 
                         <ListBox ItemsSource="{Binding OnlineUsers}"
                                  SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
@@ -113,7 +114,7 @@
                                                 Width="32"
                                                 Height="32"
                                                 CornerRadius="16"
-                                                Background="{DynamicResource SemiPurple2Color}"
+                                                Background="#00A6FF"
                                                 VerticalAlignment="Center"
                                                 Margin="0,0,8,0">
                                             <TextBlock Text="{Binding DisplayName,
@@ -122,17 +123,19 @@
                                                        VerticalAlignment="Center"
                                                        FontSize="12"
                                                        FontWeight="Bold"
-                                                       Foreground="{DynamicResource SemiPurpleColor}" />
+                                                       Foreground="White" />
                                         </Border>
 
                                         <!-- 用户信息 -->
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Text="{Binding DisplayName}"
                                                        FontSize="13"
-                                                       TextTrimming="CharacterEllipsis" />
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Foreground="{DynamicResource TextColor}" />
                                             <TextBlock Text="Online"
                                                        FontSize="10"
-                                                       Opacity="0.5" />
+                                                       Opacity="0.5"
+                                                       Foreground="{DynamicResource TextColor}" />
                                         </StackPanel>
                                     </DockPanel>
                                 </DataTemplate>
@@ -156,14 +159,17 @@
 
                                     <!-- 系统消息样式 -->
                                     <Border IsVisible="{Binding IsSystem}"
-                                            Background="{DynamicResource SemiFillColor}"
+                                            Background="{DynamicResource CardColor}"
                                             CornerRadius="12"
                                             Padding="10,4"
                                             Opacity="0.7"
+                                            BorderBrush="{DynamicResource BorderColor}"
+                                            BorderThickness="1"
                                             HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding Content}"
                                                    FontSize="11"
-                                                   Opacity="0.7" />
+                                                   Opacity="0.7"
+                                                   Foreground="{DynamicResource TextColor}" />
                                     </Border>
 
                                     <!-- 普通聊天消息样式 -->
@@ -177,7 +183,7 @@
                                                 Height="36"
                                                 CornerRadius="18"
                                                 Margin="0,0,6,0"
-                                                Background="{DynamicResource SemiBlue2Color}"
+                                                Background="#00A6FF"
                                                 VerticalAlignment="Bottom"
                                                 IsVisible="{Binding IsOthersMessage}">
                                             <TextBlock Text="{Binding NickName,
@@ -186,7 +192,7 @@
                                                        VerticalAlignment="Center"
                                                        FontSize="13"
                                                        FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource SemiBlueColor}" />
+                                                       Foreground="White" />
                                         </Border>
 
                                         <!-- 昵称 + 时间（左侧消息） -->
@@ -196,11 +202,12 @@
                                                        Text="{Binding NickName}"
                                                        FontSize="12"
                                                        FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource SemiPrimaryColor}" />
+                                                       Foreground="#00A6FF" />
                                             <TextBlock Text="{Binding FormattedTime}"
                                                        FontSize="10"
                                                        Opacity="0.45"
-                                                       HorizontalAlignment="Right" />
+                                                       HorizontalAlignment="Right"
+                                                       Foreground="{DynamicResource TextColor}" />
                                         </DockPanel>
 
                                         <!-- 自己的消息只显示时间在右侧 -->
@@ -209,10 +216,11 @@
                                                    FontSize="10"
                                                    Opacity="0.45"
                                                    HorizontalAlignment="Right"
-                                                   Margin="0,0,0,2" />
+                                                   Margin="0,0,0,2"
+                                                   Foreground="{DynamicResource TextColor}" />
 
                                         <!-- 消息气泡：自己发的（蓝色底+白字，靠右） -->
-                                        <Border Background="{DynamicResource SemiBlueColor}"
+                                        <Border Background="#00A6FF"
                                                 CornerRadius="12"
                                                 Padding="10,8"
                                                 MaxWidth="400"
@@ -224,19 +232,19 @@
                                                                Foreground="White" />
                                         </Border>
 
-                                        <!-- 消息气泡：对方发的（白色底+黑字，靠左） -->
-                                        <Border Background="White"
+                                        <!-- 消息气泡：对方发的（动态背景+动态文字，靠左） -->
+                                        <Border Background="{DynamicResource CardColor}"
                                                 CornerRadius="12"
                                                 Padding="10,8"
                                                 MaxWidth="400"
                                                 HorizontalAlignment="{Binding TextAlignment}"
-                                                BorderBrush="{DynamicResource SemiBorderColor}"
+                                                BorderBrush="{DynamicResource BorderColor}"
                                                 BorderThickness="1"
                                                 IsVisible="{Binding IsOthersMessage}">
                                             <TextBlock Text="{Binding Content}"
                                                                TextWrapping="Wrap"
                                                                FontSize="14"
-                                                               Foreground="Black" />
+                                                               Foreground="{DynamicResource TextColor}" />
                                         </Border>
                                     </StackPanel>
                                 </DockPanel>
@@ -249,9 +257,9 @@
             <!-- 底部输入框 -->
             <Border Grid.Row="2"
                     Height="60"
-                    Background="{DynamicResource RegionColor}"
+                    Background="{DynamicResource CardColor}"
                     BorderThickness="0,1,0,0"
-                    BorderBrush="{DynamicResource SemiBorderColor}"
+                    BorderBrush="{DynamicResource BorderColor}"
                     CornerRadius="0,0,8,8">
                 <DockPanel Margin="12,0"
                            VerticalAlignment="Center">
@@ -266,8 +274,8 @@
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <PathIcon Width="16" Height="16" Data="{StaticResource SemiIconSend}" />
-                            <TextBlock Text="发送" FontSize="13" VerticalAlignment="Center" />
+                            <PathIcon Width="16" Height="16" Data="{StaticResource SemiIconSend}" Foreground="White" />
+                            <TextBlock Text="发送" FontSize="13" VerticalAlignment="Center" Foreground="White" />
                         </StackPanel>
                     </Button>
 
@@ -275,7 +283,8 @@
                     <TextBox Classes="TextArea ClearButton"
                              PlaceholderText="{Binding InputPlaceholder}"
                              Text="{Binding SendContent}"
-                             AcceptsReturn="False" />
+                             AcceptsReturn="False"
+                             Foreground="{DynamicResource TextColor}" />
                 </DockPanel>
             </Border>
         </Grid>

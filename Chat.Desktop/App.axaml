@@ -17,7 +17,7 @@
         <!-- 导航菜单按钮样式 -->
         <Style Selector="Button.NavMenuButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource SemiColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="12,10"/>
             <Setter Property="CornerRadius" Value="8"/>
@@ -26,10 +26,35 @@
             <Setter Property="Cursor" Value="Hand"/>
         </Style>
         <Style Selector="Button.NavMenuButton:pointerover">
-            <Setter Property="Background" Value="{DynamicResource SemiColor8}"/>
+            <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
         </Style>
         <Style Selector="Button.NavMenuButton:pressed">
-            <Setter Property="Background" Value="{DynamicResource SemiColor9}"/>
+            <Setter Property="Background" Value="{DynamicResource PressedColor}"/>
         </Style>
     </Application.Styles>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- 浅色模式 -->
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="TextColor" Color="#1f2937"/>
+                    <SolidColorBrush x:Key="BackgroundColor" Color="#ffffff"/>
+                    <SolidColorBrush x:Key="HoverColor" Color="#f3f4f6"/>
+                    <SolidColorBrush x:Key="PressedColor" Color="#e5e7eb"/>
+                    <SolidColorBrush x:Key="CardColor" Color="#ffffff"/>
+                    <SolidColorBrush x:Key="BorderColor" Color="#e5e7eb"/>
+                </ResourceDictionary>
+                <!-- 深色模式 -->
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="TextColor" Color="#f9fafb"/>
+                    <SolidColorBrush x:Key="BackgroundColor" Color="#111827"/>
+                    <SolidColorBrush x:Key="HoverColor" Color="#374151"/>
+                    <SolidColorBrush x:Key="PressedColor" Color="#4b5563"/>
+                    <SolidColorBrush x:Key="CardColor" Color="#1f2937"/>
+                    <SolidColorBrush x:Key="BorderColor" Color="#374151"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>
