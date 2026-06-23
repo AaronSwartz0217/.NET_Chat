@@ -1,0 +1,31 @@
+[Unit]
+Description=Chat Server - 论坛/聊天系统后端API服务
+After=network.target mariadb.service mysql.service
+Wants=mariadb.service mysql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/chat-server
+ExecStart=/usr/share/dotnet/dotnet /opt/chat-server/Chat.Server.dll --urls "http://0.0.0.0:5002"
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+# 环境变量
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_ROOT=/usr/share/dotnet
+
+# 日志
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=chat-server
+
+# 安全设置
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

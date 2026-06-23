@@ -2,6 +2,7 @@ using Avalonia.Collections;
 using Chat.Application.Dtos;
 using Chat.Application.Services;
 using Chat.Core.Models;
+using Chat.Desktop;
 using CommunityToolkit.Mvvm.Input;
 using Furion.HttpRemote;
 using Mapster;
@@ -39,7 +40,7 @@ public partial class DataListViewModel : ViewModelBase
         //var students = await _studentService.GetStudentsAsync();
 
         var students = await _httpRemoteService.PostAsAsync<List<StudentDto>>(
-            "http://127.0.0.1:5002/api/student/students"
+            $"{AppConfig.ApiBaseUrl}/api/student/students"
             , builder => builder.SetFormUrlEncodedContent(
                 new
                 {

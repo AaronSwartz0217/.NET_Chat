@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Ursa.Controls;
+using Chat.Desktop;
 
 namespace Chat.Desktop.ViewModels;
 
@@ -76,7 +77,7 @@ public partial class LoginWindowViewModel : ViewModelBase, IDialogContext
         {
             // 使用原生HttpClient发送请求（更可靠）
             var response = await _httpClient.PostAsJsonAsync(
-                "http://127.0.0.1:5002/api/auth/login",
+                $"{AppConfig.ApiBaseUrl}/api/auth/login",
                 new { UserName = UserName.Trim(), Password = Password }
             );
 

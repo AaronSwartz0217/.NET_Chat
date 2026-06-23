@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Threading;
+using Chat.Desktop;
 using Chat.Desktop.Models;
 using Chat.Desktop.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -179,7 +180,7 @@ public partial class ChatViewModel : ViewModelBase
             ChatLists.Add(new ChatModel
             {
                 NickName = "系统",
-                Content = "WebSocket 连接被拒绝 (ws://localhost:5003)\n请确认后端服务已启动",
+                Content = $"WebSocket 连接被拒绝 ({AppConfig.WsUrl})\n请确认后端服务已启动",
                 SendTime = DateTime.Now,
                 MessageType = "system",
                 TextAlignment = Avalonia.Layout.HorizontalAlignment.Center,

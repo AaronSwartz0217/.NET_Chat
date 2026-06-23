@@ -11,14 +11,14 @@ public static class AppConfig
     /// 本地开发: http://localhost:5002
     /// 局域网/公网: http://你的IP:5002  (如 http://192.168.1.100:5002)
     /// </summary>
-    public static string ApiBaseUrl { get; set; } = "http://localhost:5002";
+    public static string ApiBaseUrl { get; set; } = "http://10.6.187.201:5002";
 
     /// <summary>
     /// WebSocket服务地址（端口5003）
     /// 本地开发: ws://localhost:5003
     /// 局域网/公网: ws://你的IP:5003  (如 ws://192.168.1.100:5003)
     /// </summary>
-    public static string WsUrl { get; set; } = "ws://localhost:5003";
+    public static string WsUrl { get; set; } = "ws://10.6.187.201:5003";
 
     /// <summary>
     /// 设置服务器地址（部署到Linux/Android前调用）

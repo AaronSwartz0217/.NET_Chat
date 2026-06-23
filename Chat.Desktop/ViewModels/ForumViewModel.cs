@@ -19,6 +19,10 @@ public partial class ForumViewModel : ViewModelBase
     [ObservableProperty]
     private string? _statusText = "论坛";
 
+    // ===== 显示模式切换 =====
+    [ObservableProperty]
+    private int _selectedTab = 0; // 0=论坛, 1=资讯
+
     /// <summary>
     /// 帖子列表
     /// </summary>
@@ -430,5 +434,32 @@ public partial class ForumViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(CanPreviousPage));
         OnPropertyChanged(nameof(CanNextPage));
+    }
+
+    // ===== 打开外部浏览器 =====
+
+    [RelayCommand]
+    private void OpenNews()
+    {
+        OpenUrl("https://news.qq.com/");
+    }
+
+    [RelayCommand]
+    private void OpenUrl(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return;
+
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ForumVM] 打开链接失败: {ex.Message}");
+        }
     }
 }
