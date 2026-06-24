@@ -37,7 +37,7 @@
                 <Button Grid.Column="2" Content="时间排序" Command="{Binding SortByTimeCommand}"
                         Classes="Outline" Padding="12,6" FontSize="13" Margin="0,0,8,0"
                         VerticalAlignment="Center" Foreground="{DynamicResource TextColor}"/>
-                <Button Grid.Column="3" Content="发帖" Command="{Binding ShowCreatePostCommand}"
+                <Button Grid.Column="3" Command="{Binding ShowCreatePostCommand}"
                         Classes="Primary" Padding="12,6" FontSize="13" Margin="0,0,8,0"
                         VerticalAlignment="Center">
                     <TextBlock Text="发帖" Foreground="White"/>
@@ -302,8 +302,7 @@
 
                             <!-- 发表评论输入框 -->
                             <DockPanel Margin="0,4,0,0">
-                                <Button DockPanel.Dock="Right" Content="发送 ➤"
-                                        Command="{Binding SubmitCommentCommand}"
+                                <Button DockPanel.Dock="Right" Command="{Binding SubmitCommentCommand}"
                                         Classes="Primary" Padding="14,8" FontSize="12"
                                         Margin="10,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Text="发送 ➤" Foreground="White"/>
@@ -351,7 +350,7 @@
                             </StackPanel>
 
                             <Grid ColumnDefinitions="Auto,Auto" Margin="0,10,0,0">
-                                <Button Grid.Column="0" Content="立即发布 ➤" Command="{Binding SubmitCreatePostCommand}"
+                                <Button Grid.Column="0" Command="{Binding SubmitCreatePostCommand}"
                                         Classes="Primary" Padding="18,10" FontSize="13" Margin="0,0,12,0">
                                     <TextBlock Text="立即发布 ➤" Foreground="White"/>
                                 </Button>
